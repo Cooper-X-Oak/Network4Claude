@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Claude 成本计算器 - Network4Claude</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 16px;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #333;
+            border-left: 4px solid #667eea;
+            padding-left: 12px;
+        }
+
+        .input-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .input-field {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-field label {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .input-field input {
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .input-field input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .input-field small {
+            color: #999;
+            font-size: 12px;
+            margin-top: 3px;
+        }
+
+        .calculate-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            width: 100%;
+            font-weight: 600;
+        }
+
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .results {
+            display: none;
+        }
+
+        .results.show {
+            display: block;
+        }
+
+        .result-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+        }
+
+        .result-card.best {
+            background: #e8f5e9;
+            border-left-color: #4caf50;
+        }
+
+        .result-card.warning {
+            background: #fff3e0;
+            border-left-color: #ff9800;
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .result-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .result-cost {
+            font-size: 24px;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .result-card.best .result-cost {
+            color: #4caf50;
+        }
+
+        .result-details {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .badge.best {
+            background: #4caf50;
+            color: white;
+        }
+
+        .badge.warning {
+            background: #ff9800;
+            color: white;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        table th, table td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        table th {
+            background: #f5f5f5;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .recommendation {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+
+        .recommendation h3 {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Claude 成本计算器</h1>
+            <p>找出最适合你的 Claude 使用方案</p>
+        </div>
+
+        <div class="content">
+            <!-- 输入部分 -->
+            <div class="section">
+                <div class="section-title">1. 输入你的月度用量</div>
+                <div class="input-group">
+                    <div class="input-field">
+                        <label>输入 Token (M)</label>
+                        <input type="number" id="inputTokens" value="1100" step="1">
+                        <small>百万 tokens</small>
+                    </div>
+                    <div class="input-field">
+                        <label>输出 Token (M)</label>
+                        <input type="number" id="outputTokens" value="52.3" step="0.1">
+                        <small>百万 tokens</small>
+                    </div>
+                    <div class="input-field">
+                        <label>缓存 Token (M)</label>
+                        <input type="number" id="cacheTokens" value="14700" step="1">
+                        <small>百万 tokens</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">2. 选择主要使用的模型</div>
+                <div class="input-group">
+                    <div class="input-field">
+                        <label>模型</label>
+                        <select id="modelType" style="padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 16px;">
+                            <option value="sonnet">Sonnet 4.6</option>
+                            <option value="opus">Opus 4.7</option>
+                            <option value="haiku">Haiku 4.5</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">3. 隐性成本（可选）</div>
+                <div class="input-group">
+                    <div class="input-field">
+                        <label>网络成本 (¥/月)</label>
+                        <input type="number" id="networkCost" value="29" step="1">
+                        <small>梯子/VPS 费用</small>
+                    </div>
+                    <div class="input-field">
+                        <label>风险成本 (¥/月)</label>
+                        <input type="number" id="riskCost" value="0" step="1">
+                        <small>被封号、不稳定等</small>
+                    </div>
+                </div>
+            </div>
+
+            <button class="calculate-btn" onclick="calculate()">计算最优方案</button>
+
+            <!-- 结果部分 -->
+            <div class="results" id="results">
+                <div class="section">
+                    <div class="section-title">计算结果</div>
+                    <div id="resultCards"></div>
+                </div>
+
+                <div class="recommendation" id="recommendation"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // API 定价配置
+        const pricing = {
+            sonnet: {
+                name: 'Sonnet 4.6',
+                input: 3,
+                output: 15,
+                cacheRead: 0.3,
+                cacheWrite: 3.75
+            },
+            opus: {
+                name: 'Opus 4.7',
+                input: 15,
+                output: 75,
+                cacheRead: 1.5,
+                cacheWrite: 18.75
+            },
+            haiku: {
+                name: 'Haiku 4.5',
+                input: 0.25,
+                output: 1.25,
+                cacheRead: 0.03,
+                cacheWrite: 0.30
+            }
+        };
+
+        // 汇率
+        const USD_TO_CNY = 7;
+
+        function calculate() {
+            // 获取输入
+            const inputTokens = parseFloat(document.getElementById('inputTokens').value);
+            const outputTokens = parseFloat(document.getElementById('outputTokens').value);
+            const cacheTokens = parseFloat(document.getElementById('cacheTokens').value);
+            const modelType = document.getElementById('modelType').value;
+            const networkCost = parseFloat(document.getElementById('networkCost').value);
+            const riskCost = parseFloat(document.getElementById('riskCost').value);
+
+            const model = pricing[modelType];
+
+            // 计算官方 API 成本
+            const apiCost = (
+                inputTokens * model.input +
+                outputTokens * model.output +
+                cacheTokens * model.cacheRead
+            );
+            const apiCostCNY = apiCost * USD_TO_CNY;
+
+            // 计算各方案成本
+            const solutions = [];
+
+            // 1. 官方 API 直接付费
+            solutions.push({
+                name: '官方 API 直接付费',
+                cost: apiCostCNY + networkCost,
+                details: `API: ¥${apiCostCNY.toFixed(2)} + 网络: ¥${networkCost}`,
+                breakdown: {
+                    api: apiCostCNY,
+                    network: networkCost,
+                    risk: 0
+                },
+                pros: ['按量付费', '无封号风险', '缓存便宜'],
+                cons: ['需要梯子', '需要信用卡']
+            });
+
+            // 2. 官方订阅 Pro ($20)
+            const proEquivalent = 849.50; // 基于之前的计算
+            const proCapacity = proEquivalent / (model.input + 0.0475 * model.output + 13.36 * model.cacheRead);
+            const proSufficient = inputTokens <= proCapacity;
+
+            solutions.push({
+                name: '官方订阅 Pro ($20/月)',
+                cost: 140 + networkCost,
+                details: `订阅: ¥140 + 网络: ¥${networkCost}`,
+                breakdown: {
+                    subscription: 140,
+                    network: networkCost,
+                    risk: 0
+                },
+                capacity: proCapacity,
+                sufficient: proSufficient,
+                pros: ['固定成本', '无限使用（有限额）', '稳定'],
+                cons: proSufficient ? ['需要梯子'] : ['用量超限', '需要梯子']
+            });
+
+            // 3. 官方订阅 Max ($200)
+            const maxEquivalent = 8495;
+            const maxCapacity = maxEquivalent / (model.input + 0.0475 * model.output + 13.36 * model.cacheRead);
+            const maxSufficient = inputTokens <= maxCapacity;
+
+            solutions.push({
+                name: '官方订阅 Max ($200/月)',
+                cost: 1400 + networkCost,
+                details: `订阅: ¥1400 + 网络: ¥${networkCost}`,
+                breakdown: {
+                    subscription: 1400,
+                    network: networkCost,
+                    risk: 0
+                },
+                capacity: maxCapacity,
+                sufficient: maxSufficient,
+                pros: ['大用量', '高优先级', '稳定'],
+                cons: maxSufficient ? ['价格高', '需要梯子'] : ['用量超限', '价格高']
+            });
+
+            // 4. 中转站（缓存价格高）
+            const relayApiCost = (
+                inputTokens * model.input * 1.2 +  // 加价 20%
+                outputTokens * model.output * 1.2 +
+                cacheTokens * model.cacheRead * 5  // 缓存贵 5 倍
+            );
+            const relayApiCostCNY = relayApiCost * USD_TO_CNY;
+
+            solutions.push({
+                name: '普通中转站',
+                cost: relayApiCostCNY + riskCost,
+                details: `API: ¥${relayApiCostCNY.toFixed(2)} + 风险: ¥${riskCost}`,
+                breakdown: {
+                    api: relayApiCostCNY,
+                    network: 0,
+                    risk: riskCost
+                },
+                pros: ['无需梯子', '无需信用卡', '即开即用'],
+                cons: ['缓存贵', '可能跑路', '数据隐私风险']
+            });
+
+            // 5. 廉价中转站（缓存更贵）
+            const cheapRelayApiCost = (
+                inputTokens * model.input * 1.5 +  // 加价 50%
+                outputTokens * model.output * 1.5 +
+                cacheTokens * model.cacheRead * 10  // 缓存贵 10 倍
+            );
+            const cheapRelayApiCostCNY = cheapRelayApiCost * USD_TO_CNY;
+
+            solutions.push({
+                name: '廉价中转站',
+                cost: cheapRelayApiCostCNY + riskCost * 2,
+                details: `API: ¥${cheapRelayApiCostCNY.toFixed(2)} + 风险: ¥${riskCost * 2}`,
+                breakdown: {
+                    api: cheapRelayApiCostCNY,
+                    network: 0,
+                    risk: riskCost * 2
+                },
+                pros: ['价格可能更低（轻度用户）', '无需梯子'],
+                cons: ['缓存极贵', '高风险', '可能限流']
+            });
+
+            // 6. 自建中转站（团队）
+            const selfHostCost = apiCostCNY + 500; // VPS + 开发维护成本
+            solutions.push({
+                name: '自建中转站（团队）',
+                cost: selfHostCost,
+                details: `API: ¥${apiCostCNY.toFixed(2)} + 基础设施: ¥500`,
+                breakdown: {
+                    api: apiCostCNY,
+                    infrastructure: 500,
+                    risk: 0
+                },
+                pros: ['完全可控', '数据安全', '可分摊成本'],
+                cons: ['需要技术能力', '初期投入高', '维护成本']
+            });
+
+            // 排序
+            solutions.sort((a, b) => a.cost - b.cost);
+
+            // 显示结果
+            displayResults(solutions, inputTokens);
+        }
+
+        function displayResults(solutions, inputTokens) {
+            const resultsDiv = document.getElementById('results');
+            const cardsDiv = document.getElementById('resultCards');
+            const recommendationDiv = document.getElementById('recommendation');
+
+            resultsDiv.classList.add('show');
+
+            // 生成结果卡片
+            let cardsHTML = '';
+            solutions.forEach((solution, index) => {
+                const isBest = index === 0;
+                const isWarning = solution.sufficient === false;
+                const cardClass = isBest ? 'best' : (isWarning ? 'warning' : '');
+                const badge = isBest ? '<span class="badge best">最优方案</span>' :
+                             (isWarning ? '<span class="badge warning">用量超限</span>' : '');
+
+                cardsHTML += `
+                    <div class="result-card ${cardClass}">
+                        <div class="result-header">
+                            <div>
+                                <span class="result-name">${solution.name}</span>
+                                ${badge}
+                            </div>
+                            <div class="result-cost">¥${solution.cost.toFixed(2)}/月</div>
+                        </div>
+                        <div class="result-details">
+                            <p><strong>成本构成：</strong>${solution.details}</p>
+                            ${solution.capacity ? `<p><strong>容量：</strong>${solution.capacity.toFixed(1)}M 输入 Token ${solution.sufficient ? '✓' : '✗ 不足'}</p>` : ''}
+                            <p><strong>优点：</strong>${solution.pros.join('、')}</p>
+                            <p><strong>缺点：</strong>${solution.cons.join('、')}</p>
+                        </div>
+                    </div>
+                `;
+            });
+
+            cardsDiv.innerHTML = cardsHTML;
+
+            // 生成推荐
+            const best = solutions[0];
+            let recommendation = `<h3>💡 推荐方案：${best.name}</h3>`;
+            recommendation += `<p>月成本：¥${best.cost.toFixed(2)}</p>`;
+            recommendation += `<p>基于你的用量（${inputTokens}M 输入 Token），这是最经济的方案。</p>`;
+
+            // 添加使用建议
+            if (inputTokens < 100) {
+                recommendation += `<p><strong>建议：</strong>你的用量较低，中转站或 Pro 订阅都很合适。如果不想折腾梯子，选择中转站。</p>`;
+            } else if (inputTokens < 500) {
+                recommendation += `<p><strong>建议：</strong>你的用量中等，建议使用官方订阅 + 纯净线路，稳定性和成本都较优。</p>`;
+            } else {
+                recommendation += `<p><strong>建议：</strong>你的用量较大，建议使用官方 API 或 Max 订阅。如果是团队使用，考虑自建中转站。</p>`;
+            }
+
+            recommendationDiv.innerHTML = recommendation;
+        }
+    </script>
+</body>
+</html>
