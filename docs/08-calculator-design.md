@@ -955,6 +955,7 @@ Risk-adjusted model power = 1.00 × 0.55 = $0.55 / ¥1
 
 - 将 `calculator.html` 完整升级到 `docs/08` 的分项公式。
 - 添加中转站动态价格库。
+- 二阶段支持本地 usage/cache 文件导入，参考 vibeusage 一类开源项目，把本地缓存、usage 日志、模型分布解析成统一 usage rows 后一次性混合计价。
 - 添加自动一致性检查脚本。
 - 支持多模型、多 profile 敏感性分析。
 

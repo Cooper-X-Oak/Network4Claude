@@ -70,6 +70,7 @@ Risk_adjusted_model_power_per_cny =
 - [x] 文档一致性治理 skill
 - [ ] 计算器 UI 完整实现新公式
 - [ ] 中转站动态价格库
+- [ ] 二阶段：本地 usage/cache 文件导入与混合模型用量聚合
 - [ ] 自动一致性检查脚本
 
 ## 文档治理
