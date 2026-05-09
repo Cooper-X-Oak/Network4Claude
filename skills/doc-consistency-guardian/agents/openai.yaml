@@ -1,0 +1,4 @@
+interface:
+  display_name: "Network4Claude Doc Guardian"
+  short_description: "Keep Network4Claude docs aligned."
+  default_prompt: "Use $doc-consistency-guardian to audit and update Network4Claude documentation consistency."

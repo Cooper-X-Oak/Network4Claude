@@ -32,6 +32,7 @@ xray uuid
 ```
 
 记录每个用户的 UUID：
+
 ```
 用户 1: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
 用户 2: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
@@ -100,6 +101,7 @@ systemctl restart xray
 ### 为每个用户生成配置
 
 **用户 1 配置**：
+
 ```
 服务器地址: your-vps-ip
 端口: 443
@@ -110,6 +112,7 @@ UUID: 用户1的UUID
 ```
 
 **用户 2 配置**：
+
 ```
 服务器地址: your-vps-ip
 端口: 443
@@ -136,9 +139,7 @@ tail -f /var/log/xray/access.log | grep "user1@example.com"
 
 ### 设置流量限制（可选）
 
-```bash
-# 待补充：流量限制脚本
-```
+本仓库当前不维护流量限制脚本。需要限额时，应结合 Xray 日志、VPS 流量面板和用户约定执行，不要在文档中保留未验证脚本。
 
 ---
 
@@ -152,10 +153,8 @@ tail -f /var/log/xray/access.log | grep "user1@example.com"
 4. 生成客户端配置
 
 **快速添加脚本**：
-```bash
-# 待补充：自动化脚本
-bash add-user.sh username
-```
+
+当前没有维护可直接执行的 `add-user.sh`。如后续添加，应放入 `scripts/`，并在本文链接到脚本和验证记录。
 
 ### 删除用户
 
@@ -176,6 +175,7 @@ bash add-user.sh username
 建议与共享用户约定：
 
 **✅ 允许的使用**：
+
 - 日常浏览网页
 - 观看视频（YouTube、Netflix 等）
 - 使用 AI 工具（Claude、ChatGPT 等）
@@ -183,6 +183,7 @@ bash add-user.sh username
 - 学术研究
 
 **❌ 禁止的使用**：
+
 - 批量注册账号
 - 爬虫、刷量
 - BT 下载（会被投诉）
@@ -224,16 +225,19 @@ bash add-user.sh username
 **总成本**：$50/年（约 350 元/年）
 
 **2 人分摊**：
+
 - 每人：175 元/年
 - 每人：15 元/月
 
 **3 人分摊**：
+
 - 每人：117 元/年
 - 每人：10 元/月
 
 ### 支付方式
 
 建议：
+
 - 一人先垫付
 - 其他人按月/季度/年转账
 - 或使用微信/支付宝 AA
@@ -245,30 +249,36 @@ bash add-user.sh username
 ### 定期检查
 
 **每周**：
+
 - 检查服务是否正常
 - 查看流量使用情况
 
 **每月**：
+
 - 检查 IP 纯净度
 - 检查总流量是否接近限额
 
 **每季度**：
+
 - 检查 VPS 账单
 - 续费提醒
 
 ### 问题处理
 
 **服务中断**：
+
 1. 检查 VPS 是否正常
 2. 检查配置是否正确
 3. 联系 VPS 提供商
 
 **流量超限**：
+
 1. 检查各用户流量
 2. 沟通调整使用习惯
 3. 考虑升级套餐
 
 **IP 被污染**：
+
 1. 检查是否有滥用行为
 2. 联系 VPS 提供商更换 IP
 3. 重新检测纯净度

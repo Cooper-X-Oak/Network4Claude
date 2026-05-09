@@ -1,87 +1,86 @@
 # Network4Claude
 
-为 Claude 20x 订阅打造的纯净、稳定网络环境搭建指南。
+Network4Claude 是一个面向 AI 订阅、API、中转站和自建网络方案的成本与网络环境研究项目。
 
-## 项目背景
+当前项目已经从“纯净线路搭建指南”扩展为两条主线：
 
-使用 Claude Pro/Team 等高级订阅时，网络质量直接影响使用体验：
-- IP 纯净度影响账号稳定性
-- 网络稳定性影响长对话体验
-- 共享 IP 容易触发风控
+- **网络环境**：为 Claude / ChatGPT / Codex 等高级订阅提供稳定、纯净、可复制的访问环境。
+- **成本测算**：用官方 API 价格、官方 Plan 基线和 API 等价模型购买力，统一比较官方 API、官方订阅、正规中转站、sub2api、反代、自建号池等方案。
 
-本项目记录从需求分析、方案选择到实际搭建的完整过程。
+## 当前事实源
 
-## 核心目标
+所有活跃文档必须与以下文件保持一致：
 
-- ✅ **纯净度 < 30**：避免 IP 被标记
-- ✅ **人数 < 100**：独享或小范围共享
-- ✅ **稳定可靠**：长期使用不中断
-- ✅ **成本可控**：性价比优于商业服务
+- [data/pricing.json](data/pricing.json)：官方 API token 单价，按模型和 token 类型维护。
+- [data/plan-baselines.json](data/plan-baselines.json)：官方 Plan 基线、API 等价模型购买力 profile、Codex credit rate card。
+- [docs/08-calculator-design.md](docs/08-calculator-design.md)：成本计算器的当前产品模型、公式、渠道风险模型和推荐逻辑。
+- [calculator.html](calculator.html)：当前静态计算器原型。
+- [skills/doc-consistency-guardian/SKILL.md](skills/doc-consistency-guardian/SKILL.md)：本仓库文档一致性治理规则。
 
-## 方案选择
+## 核心指标
 
-**最终方案**：搬瓦工 CN2 GIA VPS 自建
-- 成本：$50/年（约 350 元/年）
-- 流量：500GB-1TB/月
-- 支持：2-3 人共享使用
-- 优势：完全可控的 IP 纯净度
+本项目统一使用 **API 等价模型购买力** 做横向比较：
 
-详见：[决策过程](docs/01-decision.md)
+```text
+Model_power_per_cny =
+  Value_api_equivalent_usd / Actual_cost_cny
+```
+
+含义：用户实际花 1 元人民币，获得多少美元的官方 API 等价模型能力。
+
+同时使用风险修正购买力：
+
+```text
+Risk_adjusted_model_power_per_cny =
+  Model_power_per_cny
+  × Availability_factor
+  × Fulfillment_factor
+  × Compliance_factor
+  × Exit_risk_factor
+```
+
+这个指标用于比较：
+
+- 官方订阅
+- 官方 API
+- OpenRouter 类透明中转
+- sub2api / 订阅转 API
+- 反代 / 私有代理
+- 自建号池
+- 异常低价渠道
 
 ## 文档结构
 
-- [01-决策过程](docs/01-decision.md) - 为什么选择自建
-- [02-VPS选择](docs/02-vps-selection.md) - VPS 对比分析
-- [03-搭建指南](docs/03-setup-guide.md) - 完整搭建教程
-- [04-多用户配置](docs/04-multi-user.md) - 2-3 人共享配置
-- [05-成本分析](docs/05-cost-analysis.md) - 详细经济测算
-- [06-流量监控](docs/06-monitoring.md) - 流量监控与管理
-- [07-常见问题](docs/07-troubleshooting.md) - 问题排查
-
-## 快速开始
-
-```bash
-# 待补充：一键安装脚本
-bash <(curl -Ls https://raw.githubusercontent.com/Cooper-X-Oak/Network4Claude/main/scripts/install.sh)
-```
-
-## 使用场景
-
-- ✅ Claude Pro/Team 订阅用户
-- ✅ 需要稳定访问 AI 服务
-- ✅ 开发者、研究者
-- ✅ 2-3 人小团队共享
-
-## 成本分析
-
-### 完整方案对比
-
-| 方案 | 月成本 | 年成本 | 单位成本 | 推荐度 |
-|------|--------|--------|----------|--------|
-| 中转站 API | ¥66-200+ | ¥792-2,400+ | ¥0.10-0.15/条 | ⭐⭐ |
-| Pro + 普通网络 | ¥157 | ¥1,884 | ¥0.017/条 | ⭐⭐⭐ |
-| **Pro + 纯净线路** | **¥169** | **¥2,028** | **¥0.019/条** | **⭐⭐⭐⭐⭐** |
-| Max + 纯净线路 | ¥729-1,429 | ¥8,748-17,148 | ¥0.016-0.032/条 | ⭐⭐⭐⭐ |
-
-**推荐方案**：Pro + 纯净线路
-- 月成本：¥169（Claude Pro ¥140 + VPS ¥29）
-- 单位成本：¥0.019/条消息
-- 稳定、纯净、性价比最优
-
-详见：[成本分析](docs/05-cost-analysis.md)
+- [01-决策过程](docs/01-decision.md)：为什么需要纯净网络环境。
+- [02-VPS选择](docs/02-vps-selection.md)：VPS 线路和供应商对比。
+- [03-搭建指南](docs/03-setup-guide.md)：自建网络环境步骤。
+- [04-多用户配置](docs/04-multi-user.md)：小团队共享配置和注意事项。
+- [05-成本分析](docs/05-cost-analysis.md)：当前成本模型总览。
+- [06-实际用量成本](docs/06-actual-usage-cost.md)：基于真实 token 用量的 API 成本测算。
+- [07-订阅容量测算](docs/07-subscription-capacity-calculator.md)：官方 Plan 的 API 等价容量与购买力测算。
+- [08-计算器设计](docs/08-calculator-design.md)：计算器产品设计与公式系统。
 
 ## 项目状态
 
-- [x] 需求分析
-- [x] 方案选择
-- [ ] VPS 购买
-- [ ] 环境搭建
-- [ ] 多用户配置
-- [ ] 文档完善
+- [x] 纯净线路方案决策
+- [x] VPS 选择与搭建文档
+- [x] 官方 API 价格参数化
+- [x] 官方 Plan API 等价模型购买力建模
+- [x] 中转站 / sub2api / 反代风险模型
+- [x] 文档一致性治理 skill
+- [ ] 计算器 UI 完整实现新公式
+- [ ] 中转站动态价格库
+- [ ] 自动一致性检查脚本
 
-## 贡献
+## 文档治理
 
-欢迎提交 Issue 和 PR，分享你的经验和改进建议。
+本仓库不保留互相冲突的旧结论。更新价格、公式、模型名、Plan 限额、推荐逻辑时，必须同步检查 README、AGENTS、CLAUDE、docs、notes、data、calculator 和 skills。
+
+执行一致性治理时使用：
+
+```text
+Use $doc-consistency-guardian to audit and update Network4Claude documentation consistency.
+```
 
 ## 许可
 

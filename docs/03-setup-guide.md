@@ -14,16 +14,19 @@
 ### 2. 工具准备
 
 **Windows**：
+
 - SSH 客户端（Windows Terminal / PuTTY）
 - 文本编辑器（VS Code / Notepad++）
 
 **macOS/Linux**：
+
 - 自带 SSH 客户端
 - 文本编辑器（VS Code / vim）
 
 ### 3. 信息记录
 
 购买后记录以下信息：
+
 ```
 VPS IP: _______________
 SSH 端口: _______________
@@ -59,21 +62,14 @@ yum update -y
 ### 方案选择
 
 推荐使用 **Xray** + **VLESS/XTLS** 协议：
+
 - 性能优秀
 - 支持多用户
 - 配置灵活
 
-### 一键安装脚本
+### 安装方式
 
-```bash
-# 待补充：测试后提供
-```
-
-### 手动安装（备选）
-
-```bash
-# 待补充：详细步骤
-```
+本仓库当前不维护一键安装脚本。实际安装应以 Xray 官方脚本和当前系统环境为准，执行前先确认脚本来源、系统版本和防火墙策略。
 
 ---
 
@@ -81,9 +77,7 @@ yum update -y
 
 ### 单用户配置
 
-```json
-// 待补充：配置模板
-```
+配置模板应放在 `configs/` 并使用占位符，不在正文中维护可能过期的完整配置。
 
 ### 多用户配置
 
@@ -96,24 +90,28 @@ yum update -y
 ### Windows
 
 推荐客户端：
+
 - v2rayN
 - Clash for Windows
 
 ### macOS
 
 推荐客户端：
+
 - ClashX
 - V2RayX
 
 ### iOS
 
 推荐客户端：
+
 - Shadowrocket
 - Quantumult X
 
 ### Android
 
 推荐客户端：
+
 - v2rayNG
 - Clash for Android
 
@@ -209,9 +207,7 @@ systemctl restart sshd
 
 ### 3. 配置防火墙
 
-```bash
-# 待补充：防火墙配置
-```
+根据实际系统开放服务端口，并确认 SSH 端口不被误锁。防火墙命令随发行版变化，不在本文硬编码。
 
 ---
 

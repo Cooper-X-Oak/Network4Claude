@@ -1,0 +1,142 @@
+{
+  "updated_at": "2026-05-09",
+  "notes": [
+    "Subscription usage is a planning baseline, not a guaranteed token pool.",
+    "Token-equivalent capacity must be derived from a user-defined average task profile.",
+    "API-equivalent purchasing power = official capacity units × workload profile × official API price."
+  ],
+  "api_equivalent_profiles": {
+    "chatgpt_gpt_5_5_plus_400_usd_profile": {
+      "description": "A light GPT-5.5 chat profile that explains the common estimate that Plus is roughly $400/month of API-equivalent model value.",
+      "model": "gpt_5_5",
+      "input_tokens_per_message": 1500,
+      "cached_input_tokens_per_message": 0,
+      "output_tokens_per_message": 100,
+      "api_cost_usd_per_message": 0.0105
+    },
+    "claude_sonnet_code_heavy_8500_usd_profile": {
+      "description": "A heavy Claude Code-like profile calibrated from 1,100M input, 52.3M output, and 14,700M cache-read tokens over a Max 20x monthly message baseline.",
+      "model": "claude_sonnet_4_6",
+      "input_tokens_per_message": 8488,
+      "output_tokens_per_message": 404,
+      "cache_read_tokens_per_message": 113426,
+      "api_cost_usd_per_message": 0.06555
+    }
+  },
+  "claude": {
+    "source_urls": [
+      "https://support.claude.com/en/articles/8324991-about-claude-s-pro-plan-usage",
+      "https://support.claude.com/en/articles/11014257-about-claude-s-max-plan-usage"
+    ],
+    "reset_window_hours": 5,
+    "sessions_per_30d": 144,
+    "plans": {
+      "pro": {
+        "monthly_fee_usd": 20,
+        "short_conversation_messages_per_5h": 45,
+        "short_conversation_messages_per_30d": 6480,
+        "api_equivalent_value_usd": {
+          "claude_sonnet_code_heavy_8500_usd_profile": 425
+        }
+      },
+      "max_5x": {
+        "monthly_fee_usd": 100,
+        "short_conversation_messages_per_5h": 225,
+        "short_conversation_messages_per_30d": 32400,
+        "api_equivalent_value_usd": {
+          "claude_sonnet_code_heavy_8500_usd_profile": 2124
+        }
+      },
+      "max_20x": {
+        "monthly_fee_usd": 200,
+        "short_conversation_messages_per_5h": 900,
+        "short_conversation_messages_per_30d": 129600,
+        "api_equivalent_value_usd": {
+          "claude_sonnet_code_heavy_8500_usd_profile": 8495
+        }
+      }
+    }
+  },
+  "openai_codex": {
+    "source_urls": [
+      "https://help.openai.com/en/articles/11369540-using-codex-with-your-chatgpt-plan",
+      "https://help.openai.com/en/articles/20001106-codex-rate-card"
+    ],
+    "reset_window_hours": 5,
+    "chatgpt_plan_baselines": {
+      "plus": {
+        "monthly_fee_usd": 20,
+        "gpt_5_5_messages_per_3h": 160,
+        "gpt_5_5_messages_per_30d": 38400,
+        "api_equivalent_value_usd": {
+          "chatgpt_gpt_5_5_plus_400_usd_profile": 403
+        }
+      },
+      "pro_100": {
+        "monthly_fee_usd": 100,
+        "usage_multiplier_vs_plus": 5,
+        "gpt_5_5_messages_per_30d": 192000,
+        "api_equivalent_value_usd": {
+          "chatgpt_gpt_5_5_plus_400_usd_profile": 2016
+        }
+      },
+      "pro_200": {
+        "monthly_fee_usd": 200,
+        "usage_multiplier_vs_plus": 20,
+        "gpt_5_5_messages_per_30d": 768000,
+        "api_equivalent_value_usd": {
+          "chatgpt_gpt_5_5_plus_400_usd_profile": 8064
+        }
+      }
+    },
+    "included_usage_estimates": {
+      "plus": {
+        "local_messages_per_5h": {
+          "min": 30,
+          "max": 150
+        },
+        "cloud_tasks_per_5h": {
+          "min": 5,
+          "max": 40
+        }
+      },
+      "pro": {
+        "local_messages_per_5h": {
+          "min": 300,
+          "max": 1500
+        },
+        "cloud_tasks_per_5h": {
+          "min": 50,
+          "max": 400
+        }
+      }
+    },
+    "credit_rate_card_per_1m_tokens": {
+      "gpt_5_5": {
+        "input": 125,
+        "cached_input": 12.5,
+        "output": 750
+      },
+      "gpt_5_4": {
+        "input": 62.5,
+        "cached_input": 6.25,
+        "output": 375
+      },
+      "gpt_5_4_mini": {
+        "input": 18.75,
+        "cached_input": 1.875,
+        "output": 113
+      },
+      "gpt_5_3_codex": {
+        "input": 43.75,
+        "cached_input": 4.375,
+        "output": 350
+      },
+      "gpt_5_2": {
+        "input": 43.75,
+        "cached_input": 4.375,
+        "output": 350
+      }
+    }
+  }
+}

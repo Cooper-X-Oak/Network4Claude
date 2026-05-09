@@ -1,0 +1,33 @@
+{
+  "source": "Anthropic Claude pricing documentation",
+  "source_url": "https://docs.anthropic.com/en/docs/about-claude/pricing",
+  "updated_at": "2026-05-09",
+  "currency": "USD",
+  "unit": "1M tokens",
+  "models": {
+    "opus_4_7": {
+      "display_name": "Claude Opus 4.7",
+      "base_input": 5,
+      "cache_write_5m": 6.25,
+      "cache_write_1h": 10,
+      "cache_read": 0.5,
+      "output": 25
+    },
+    "sonnet_4_6": {
+      "display_name": "Claude Sonnet 4.6",
+      "base_input": 3,
+      "cache_write_5m": 3.75,
+      "cache_write_1h": 6,
+      "cache_read": 0.3,
+      "output": 15
+    },
+    "haiku_4_5": {
+      "display_name": "Claude Haiku 4.5",
+      "base_input": 1,
+      "cache_write_5m": 1.25,
+      "cache_write_1h": 2,
+      "cache_read": 0.1,
+      "output": 5
+    }
+  }
+}
