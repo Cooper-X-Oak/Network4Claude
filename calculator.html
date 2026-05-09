@@ -231,33 +231,44 @@
         </section>
     </main>
 
-    <script>
-        const pricing = {
-            opus_4_7: {
-                name: "Claude Opus 4.7",
-                baseInput: 5,
-                cacheWrite5m: 6.25,
-                cacheWrite1h: 10,
-                cacheRead: 0.5,
-                output: 25
-            },
-            sonnet_4_6: {
-                name: "Claude Sonnet 4.6",
-                baseInput: 3,
-                cacheWrite5m: 3.75,
-                cacheWrite1h: 6,
-                cacheRead: 0.3,
-                output: 15
-            },
-            haiku_4_5: {
-                name: "Claude Haiku 4.5",
-                baseInput: 1,
-                cacheWrite5m: 1.25,
-                cacheWrite1h: 2,
-                cacheRead: 0.1,
-                output: 5
+    <script type="module">
+        import {
+            calculatePurchasingPower,
+            calculateUsageRows,
+            normalizePricing
+        } from "./scripts/cost-engine.mjs";
+
+        const rawPricing = {
+            unit: "1M tokens",
+            models: {
+                opus_4_7: {
+                    display_name: "Claude Opus 4.7",
+                    base_input: 5,
+                    cache_write_5m: 6.25,
+                    cache_write_1h: 10,
+                    cache_read: 0.5,
+                    output: 25
+                },
+                sonnet_4_6: {
+                    display_name: "Claude Sonnet 4.6",
+                    base_input: 3,
+                    cache_write_5m: 3.75,
+                    cache_write_1h: 6,
+                    cache_read: 0.3,
+                    output: 15
+                },
+                haiku_4_5: {
+                    display_name: "Claude Haiku 4.5",
+                    base_input: 1,
+                    cache_write_5m: 1.25,
+                    cache_write_1h: 2,
+                    cache_read: 0.1,
+                    output: 5
+                }
             }
         };
+
+        const pricing = normalizePricing(rawPricing);
 
         const planBaselines = {
             chatgpt_plus: { actualCost: 140, apiEquivalent: 403, riskFactor: 0.95 },
@@ -282,8 +293,9 @@
             return `${currency}${value.toLocaleString(undefined, { maximumFractionDigits: 2 })}`;
         }
 
-        function calculate() {
-            const model = pricing[document.getElementById("model").value];
+        window.calculate = function calculate() {
+            const modelId = document.getElementById("model").value;
+            const model = pricing[modelId];
             const input = numberValue("input");
             const output = numberValue("output");
             const cacheRead = numberValue("cacheRead");
@@ -294,31 +306,47 @@
             const riskFactor = numberValue("riskFactor");
             const usdCny = numberValue("usdCny") || 7;
 
-            const inputCost = input * model.baseInput;
-            const outputCost = output * model.output;
-            const cacheReadCost = cacheRead * model.cacheRead;
-            const cacheWrite5mCost = cacheWrite5m * model.cacheWrite5m;
-            const cacheWrite1hCost = cacheWrite1h * model.cacheWrite1h;
-            const apiCostUsd = inputCost + outputCost + cacheReadCost + cacheWrite5mCost + cacheWrite1hCost;
-            const apiCostCny = apiCostUsd * usdCny;
+            const usage = calculateUsageRows([{
+                provider: model.provider,
+                model: modelId,
+                unit: "M",
+                input,
+                output,
+                cacheRead,
+                cacheWrite5m,
+                cacheWrite1h
+            }], pricing, { usdToCny });
+            const row = usage.rows[0];
+            const buyingPower = calculatePurchasingPower({
+                apiEquivalentValueUsd: apiEquivalent,
+                actualCostCny: actualCost,
+                riskFactor
+            });
 
-            const modelPower = actualCost > 0 ? apiEquivalent / actualCost : 0;
-            const riskAdjustedPower = modelPower * riskFactor;
+            const inputCost = row.cost.parts.input;
+            const outputCost = row.cost.parts.output;
+            const cacheReadCost = row.cost.parts.cacheRead;
+            const cacheWrite5mCost = row.cost.parts.cacheWrite5m;
+            const cacheWrite1hCost = row.cost.parts.cacheWrite1h;
+            const apiCostUsd = usage.total.usd;
+            const apiCostCny = usage.total.cny;
+            const modelPower = buyingPower.modelPowerPerCny;
+            const riskAdjustedPower = buyingPower.riskAdjustedModelPowerPerCny;
 
             document.getElementById("apiCost").textContent = `${money(apiCostUsd, "$")} / ${money(apiCostCny, "¥")}`;
             document.getElementById("power").textContent = `$${modelPower.toFixed(2)} / ¥1`;
             document.getElementById("riskPower").textContent = `$${riskAdjustedPower.toFixed(2)} / ¥1`;
 
             document.getElementById("breakdown").innerHTML = [
-                ["Base Input", `${input}M × $${model.baseInput}`, money(inputCost, "$")],
-                ["Output", `${output}M × $${model.output}`, money(outputCost, "$")],
-                ["Cache Read", `${cacheRead}M × $${model.cacheRead}`, money(cacheReadCost, "$")],
-                ["Cache Write 5m", `${cacheWrite5m}M × $${model.cacheWrite5m}`, money(cacheWrite5mCost, "$")],
-                ["Cache Write 1h", `${cacheWrite1h}M × $${model.cacheWrite1h}`, money(cacheWrite1hCost, "$")],
+                ["Base Input", `${input}M × $${model.prices.input}`, money(inputCost, "$")],
+                ["Output", `${output}M × $${model.prices.output}`, money(outputCost, "$")],
+                ["Cache Read", `${cacheRead}M × $${model.prices.cacheRead}`, money(cacheReadCost, "$")],
+                ["Cache Write 5m", `${cacheWrite5m}M × $${model.prices.cacheWrite5m}`, money(cacheWrite5mCost, "$")],
+                ["Cache Write 1h", `${cacheWrite1h}M × $${model.prices.cacheWrite1h}`, money(cacheWrite1hCost, "$")],
                 ["API 等价模型购买力", `${money(apiEquivalent, "$")} / ${money(actualCost, "¥")}`, `$${modelPower.toFixed(2)} / ¥1`],
                 ["风险修正", `$${modelPower.toFixed(2)} × ${riskFactor}`, `<span class="pill ${riskFactor < 0.7 ? "risk" : ""}">$${riskAdjustedPower.toFixed(2)} / ¥1</span>`]
             ].map(row => `<tr><td>${row[0]}</td><td>${row[1]}</td><td>${row[2]}</td></tr>`).join("");
-        }
+        };
 
         calculate();
     </script>

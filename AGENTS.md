@@ -22,6 +22,8 @@ Use these as the active sources of truth:
 - `data/pricing.json`: official API token prices by model and token type.
 - `data/plan-baselines.json`: official plan baselines, API-equivalent purchasing power profiles, and Codex/OpenAI credit baselines.
 - `docs/08-calculator-design.md`: current product model, formulas, scenarios, channel risk model, and recommendation logic.
+- `docs/09-precision-calculation-engine.md`: calculation engine schema and deterministic usage-to-cost chain.
+- `scripts/cost-engine.mjs`: reusable precision calculation implementation.
 - `calculator.html`: current static prototype. It must not contradict `data/` or `docs/08-calculator-design.md`.
 - `skills/doc-consistency-guardian/SKILL.md`: repository-specific documentation governance workflow.
 

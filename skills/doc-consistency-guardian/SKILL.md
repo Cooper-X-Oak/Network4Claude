@@ -12,6 +12,8 @@ Use these files as the current source of truth:
 - `data/pricing.json`: official API token prices by model and token type.
 - `data/plan-baselines.json`: official plan baselines, API-equivalent purchasing power profiles, and subscription capacity assumptions.
 - `docs/08-calculator-design.md`: current product model, formulas, scenario model, channel risk model, and decision logic.
+- `docs/09-precision-calculation-engine.md`: usage row schema and deterministic calculation chain.
+- `scripts/cost-engine.mjs`: reusable precision calculation implementation.
 - `calculator.html`: current runnable calculator prototype; it must not contradict `data/` and `docs/08-calculator-design.md`.
 - `AGENTS.md`: repository operating rules and project-level collaboration constraints.
 

@@ -59,6 +59,7 @@ Risk_adjusted_model_power_per_cny =
 - [06-实际用量成本](docs/06-actual-usage-cost.md)：基于真实 token 用量的 API 成本测算。
 - [07-订阅容量测算](docs/07-subscription-capacity-calculator.md)：官方 Plan 的 API 等价容量与购买力测算。
 - [08-计算器设计](docs/08-calculator-design.md)：计算器产品设计与公式系统。
+- [09-精算引擎](docs/09-precision-calculation-engine.md)：从混合模型用量到成本和购买力的确定计算链。
 
 ## 项目状态
 
@@ -68,6 +69,7 @@ Risk_adjusted_model_power_per_cny =
 - [x] 官方 Plan API 等价模型购买力建模
 - [x] 中转站 / sub2api / 反代风险模型
 - [x] 文档一致性治理 skill
+- [x] 精算引擎：混合模型用量到成本与购买力
 - [ ] 计算器 UI 完整实现新公式
 - [ ] 中转站动态价格库
 - [ ] 二阶段：本地 usage/cache 文件导入与混合模型用量聚合
