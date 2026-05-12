@@ -78,8 +78,8 @@ function Get-UiState {
     "radarDotCount: document.querySelectorAll('#radarDots circle').length,",
     "radarLabelCount: document.querySelectorAll('.radar-label').length,",
     "personaCount: document.querySelectorAll('.persona-card').length,",
-    "priceTierCount: document.querySelectorAll('#priceList li').length,",
-    "priceSources: Array.from(document.querySelectorAll('#priceList .tier-source')).map(el => el.textContent || ''),",
+    "priceTierCount: document.querySelectorAll('#priceList .price-tier').length,",
+    "priceTiers: Array.from(document.querySelectorAll('#priceList .price-tier')).map(el => el.getAttribute('data-tier') || ''),",
     "priceAmounts: Array.from(document.querySelectorAll('#priceList .tier-amount')).map(el => el.textContent || ''),",
     "priceAmountValues: Array.from(document.querySelectorAll('#priceList .tier-amount')).map(el => Number(el.dataset.cny || 0)),",
     "hasWorkbench: !!document.getElementById('workbench'),",
@@ -88,6 +88,7 @@ function Get-UiState {
     "scrollHeight: document.documentElement.scrollHeight,",
     "viewportHeight: window.innerHeight,",
     "snapshotChartRect: rect('.snapshot-chart'),",
+    "snapshotControlsRect: rect('.snapshot-controls'),",
     "snapshotPricesRect: rect('.snapshot-prices'),",
     "personasSectionRect: rect('.personas-section')",
     "};",
@@ -129,12 +130,19 @@ function Test-Persona {
   Assert-True ($state.radarDotCount -eq 5) "$Id renders five radar dots"
   Assert-True ($state.radarLabelCount -eq 5) "$Id renders five radar axis labels"
   Assert-True ($state.priceTierCount -eq 3) "$Id renders three price tiers"
+  Assert-True (
+    $state.priceTiers.Count -eq 3 -and
+    $state.priceTiers[0] -eq "cheap" -and
+    $state.priceTiers[1] -eq "regular" -and
+    $state.priceTiers[2] -eq "official"
+  ) "$Id keeps the fixed channel comparison order"
   Assert-True ($state.bodyOverflow -eq "hidden") "$Id keeps the page in one-screen mode"
   Assert-True ($state.scrollHeight -le ($state.viewportHeight + 2)) "$Id does not require vertical scrolling"
   Assert-True (
     $state.snapshotChartRect.bottom -le $state.personasSectionRect.top -and
+    $state.snapshotControlsRect.bottom -le $state.personasSectionRect.top -and
     $state.snapshotPricesRect.bottom -le $state.personasSectionRect.top
-  ) "$Id keeps the radar and price section above the persona cards"
+  ) "$Id keeps the three snapshot panels above the persona cards"
 
   if ($Id -eq "api_integration") {
     Assert-True ($state.priceAmountValues[-1] -gt 0) "api_integration now shows a positive default monthly cost profile"
@@ -152,7 +160,12 @@ function Test-RapidSwitching {
   Assert-True ($state.selectedPersona -eq "coding") "rapid switching ends on the last clicked persona"
   Assert-True (-not [string]::IsNullOrWhiteSpace($state.heading)) "rapid switching keeps snapshot heading populated"
   Assert-True ($state.radarPointCount -eq 5) "rapid switching keeps the radar polygon valid"
-  Assert-True ($state.priceSources.Count -eq 3) "rapid switching keeps the price tier block valid"
+  Assert-True ($state.priceTiers.Count -eq 3) "rapid switching keeps the price tier block valid"
+  Assert-True (
+    $state.priceTiers[0] -eq "cheap" -and
+    $state.priceTiers[1] -eq "regular" -and
+    $state.priceTiers[2] -eq "official"
+  ) "rapid switching keeps the fixed channel comparison order"
 }
 
 function Test-TruthSourceCoverage {

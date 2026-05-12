@@ -54,10 +54,10 @@
       height: 100vh;
       max-width: 1180px;
       margin: 0 auto;
-      padding: 20px 28px 16px;
+      padding: 16px 24px 12px;
       display: flex;
       flex-direction: column;
-      gap: 20px;
+      gap: 16px;
     }
 
     .workbench {
@@ -65,7 +65,7 @@
       min-height: 0;
       display: flex;
       flex-direction: column;
-      gap: 20px;
+      gap: 14px;
     }
 
     /* ───── masthead ───── */
@@ -75,7 +75,7 @@
       display: flex;
       justify-content: space-between;
       align-items: baseline;
-      padding-bottom: 14px;
+      padding-bottom: 10px;
       border-bottom: 1px solid var(--color-border);
       font-size: 13px;
       color: var(--color-ink-3);
@@ -181,17 +181,17 @@
     .stage-snapshot {
       width: 100%;
       height: 100%;
-      gap: 12px;
+      gap: 8px;
       justify-content: flex-start;
-      padding-top: 14px;
+      padding-top: 8px;
     }
 
     .snapshot-head { flex: 0 0 auto; }
 
     .snapshot-eyebrow {
-      margin: 0 0 6px;
+      margin: 0 0 4px;
       font-family: var(--font-serif);
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 500;
       letter-spacing: 0.18em;
       text-transform: uppercase;
@@ -201,7 +201,7 @@
     .profile-name {
       margin: 0;
       font-family: var(--font-serif);
-      font-size: clamp(28px, 3.4vw, 34px);
+      font-size: clamp(26px, 3.1vw, 32px);
       font-weight: 500;
       line-height: 1.1;
       letter-spacing: -0.012em;
@@ -210,19 +210,19 @@
 
     .profile-tagline {
       max-width: 580px;
-      margin: 6px 0 0;
+      margin: 4px 0 0;
       font-family: var(--font-serif);
-      font-size: clamp(14px, 1.4vw, 17px);
+      font-size: clamp(13px, 1.3vw, 16px);
       font-style: italic;
-      line-height: 1.5;
+      line-height: 1.4;
       color: var(--color-ink-2);
     }
 
     .snapshot-grid {
       flex: 1 1 auto;
       display: grid;
-      grid-template-columns: minmax(0, 240px) minmax(0, 1fr);
-      gap: 36px;
+      grid-template-columns: minmax(0, 220px) minmax(0, 280px) minmax(0, 1fr);
+      gap: 14px;
       align-items: start;
       min-height: 0;
     }
@@ -231,17 +231,18 @@
        which makes the SVG's intrinsic viewBox push the cell wider than
        grid-template-columns allows. min-width: 0 fixes that. */
     .snapshot-chart {
-      max-width: 240px;
+      max-width: 220px;
       min-width: 0;
       overflow: hidden;
     }
+    .snapshot-controls,
     .snapshot-prices {
       min-width: 0;
       overflow: hidden;
     }
 
     .panel-cap {
-      margin: 0 0 6px;
+      margin: 0 0 4px;
       font-family: var(--font-serif);
       font-size: 12px;
       letter-spacing: 0.18em;
@@ -251,10 +252,10 @@
 
     /* radar */
 
-    #radarMount { width: 100%; max-width: 198px; }
+    #radarMount { width: 100%; max-width: 180px; }
     .radar {
       width: 100%;
-      max-width: 198px;
+      max-width: 180px;
       height: auto;
       aspect-ratio: 1 / 1;
       display: block;
@@ -287,51 +288,166 @@
     }
 
     .radar-totals {
-      margin: 8px 0 0;
-      font-size: 11px;
-      line-height: 1.45;
+      margin: 6px 0 0;
+      font-size: 10px;
+      line-height: 1.35;
       color: var(--color-ink-3);
+    }
+
+    /* controls */
+
+    .snapshot-controls {
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+
+    .controls-card {
+      border: 1px solid var(--color-border);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.7);
+      padding: 10px 10px 8px;
+    }
+
+    .controls-stack {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px 10px;
+    }
+
+    .control-metric {
+      grid-column: 1 / -1;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .control-label {
+      display: block;
+      margin: 0;
+      font-family: var(--font-serif);
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--color-ink-3);
+    }
+
+    .control-baseline {
+      display: block;
+      margin-top: 6px;
+      font-family: var(--font-mono);
+      font-size: 23px;
+      font-weight: 500;
+      line-height: 1;
+      color: var(--color-ink);
+    }
+
+    .control-subline,
+    .control-hint,
+    .control-note {
+      display: block;
+      margin-top: 3px;
+      font-size: 9px;
+      line-height: 1.3;
+      color: var(--color-ink-3);
+    }
+
+    .control-field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .control-input-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .control-input {
+      width: 100%;
+      min-width: 0;
+      padding: 7px 9px;
+      border: 1px solid var(--color-border-strong);
+      border-radius: 10px;
+      background: var(--color-bg);
+      color: var(--color-ink);
+      font-family: var(--font-mono);
+      font-size: 13px;
+    }
+
+    .control-suffix {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--color-ink-3);
+      white-space: nowrap;
+    }
+
+    .control-note {
+      grid-column: 1 / -1;
     }
 
     /* prices */
 
     .snapshot-prices { display: flex; flex-direction: column; min-height: 0; }
 
-    .price-list {
-      list-style: none;
-      padding: 0;
-      margin: 0;
+    .price-table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
       border-top: 1px solid var(--color-border);
     }
 
-    .price-tier {
-      display: grid;
-      grid-template-columns: 56px 1fr auto;
-      gap: 16px;
-      align-items: baseline;
-      padding: 10px 0;
+    .price-head th {
+      padding: 0 0 7px;
       border-bottom: 1px solid var(--color-border);
+      text-align: left;
+      font-family: var(--font-serif);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--color-ink-3);
+    }
+
+    .price-head th:nth-child(1) { width: 24%; }
+    .price-head th:nth-child(2) { width: 30%; }
+    .price-head th:nth-child(3) { width: 22%; text-align: right; }
+    .price-head th:nth-child(4) { width: 24%; text-align: right; }
+
+    .price-tier td {
+      padding: 8px 0;
+      border-bottom: 1px solid var(--color-border);
+      vertical-align: top;
       transition:
         opacity 380ms var(--ease-smooth),
         transform 380ms var(--ease-out),
         filter 320ms var(--ease-smooth);
     }
-    .price-tier.is-morphing {
+    .price-tier td:nth-child(3),
+    .price-tier td:nth-child(4) {
+      text-align: right;
+    }
+    .price-tier.is-morphing td {
       opacity: 0;
       transform: translateY(6px);
       filter: blur(3px);
+    }
+    .price-tier.is-baseline td {
+      background: rgba(184, 120, 52, 0.07);
     }
 
     .tier-rank {
       font-family: var(--font-serif);
       font-size: 12px;
-      letter-spacing: 0.1em;
+      letter-spacing: 0.08em;
       color: var(--color-ink-3);
     }
 
     .tier-source {
+      display: block;
       font-family: var(--font-serif);
-      font-size: 17px;
+      font-size: 15px;
       font-weight: 500;
       line-height: 1.25;
       color: var(--color-ink);
@@ -339,16 +455,18 @@
 
     .tier-note {
       display: block;
-      margin-top: 1px;
+      margin-top: 2px;
       font-family: var(--font-sans);
-      font-size: 11px;
+      font-size: 10px;
       color: var(--color-ink-3);
     }
 
-    .tier-amount {
+    .tier-amount,
+    .tier-multiplier {
+      display: block;
       font-family: var(--font-mono);
       font-variant-numeric: tabular-nums;
-      font-size: 18px;
+      font-size: 16px;
       font-weight: 500;
       color: var(--color-ink);
       text-align: right;
@@ -356,9 +474,9 @@
     }
 
     .price-baseline {
-      margin: 8px 0 0;
-      font-size: 12px;
-      line-height: 1.55;
+      margin: 6px 0 0;
+      font-size: 11px;
+      line-height: 1.45;
       color: var(--color-ink-3);
     }
 
@@ -444,7 +562,7 @@
 
     .colophon {
       flex: 0 0 auto;
-      padding-top: 10px;
+      padding-top: 8px;
       border-top: 1px solid var(--color-border);
       display: flex;
       justify-content: space-between;
@@ -550,9 +668,55 @@
             <div id="radarMount"></div>
             <p class="radar-totals" id="radarTotals">—</p>
           </div>
+          <div class="snapshot-controls">
+            <p class="panel-cap">计算基线</p>
+            <div class="controls-card">
+              <div class="controls-stack">
+                <div class="control-metric">
+                  <span class="control-label">上游 API 等价</span>
+                  <strong class="control-baseline" id="baselineUsd">$0 / 月</strong>
+                  <span class="control-subline" id="baselineOfficial">官方 API 直购约 ¥0 / 月</span>
+                </div>
+                <label class="control-field">
+                  <span class="control-label">正规中转</span>
+                  <div class="control-input-row">
+                    <input class="control-input" id="regularRateInput" type="number" min="0.1" max="999" step="0.1" inputmode="decimal" />
+                    <span class="control-suffix">¥ / $1</span>
+                  </div>
+                  <span class="control-hint">默认 5.5，可按实付价改。</span>
+                </label>
+                <label class="control-field">
+                  <span class="control-label">官方 API 直购</span>
+                  <div class="control-input-row">
+                    <input class="control-input" id="officialRateInput" type="number" min="0.1" max="999" step="0.1" inputmode="decimal" />
+                    <span class="control-suffix">¥ / $1</span>
+                  </div>
+                  <span class="control-hint">默认 7.0，官方直购基线。</span>
+                </label>
+                <label class="control-field">
+                  <span class="control-label">廉价中转</span>
+                  <div class="control-input-row">
+                    <input class="control-input" id="cheapRateInput" type="number" min="0.1" max="999" step="0.1" inputmode="decimal" />
+                    <span class="control-suffix">¥ / $1</span>
+                  </div>
+                  <span class="control-hint">默认 2.5，只看极端低价。</span>
+                </label>
+              </div>
+            </div>
+          </div>
           <div class="snapshot-prices">
-            <p class="panel-cap">月度价格三档</p>
-            <ol class="price-list" id="priceList"></ol>
+            <p class="panel-cap">月度实付对照</p>
+            <table class="price-table" aria-label="月度实付对照表">
+              <thead class="price-head">
+                <tr>
+                  <th scope="col">渠道</th>
+                  <th scope="col">口径</th>
+                  <th scope="col">实付 / 月</th>
+                  <th scope="col">放大倍率</th>
+                </tr>
+              </thead>
+              <tbody id="priceList"></tbody>
+            </table>
             <p class="price-baseline" id="priceBaseline">—</p>
           </div>
         </div>
@@ -576,18 +740,10 @@
   <script type="module">
     const USD_TO_CNY = 7;
 
-    const CHANNEL_RATIO = {
-      cheap: { cny_per_usd: 2.5, source: "号池 / 拼车一档" },
-      mid:   { cny_per_usd: 5.5, source: "OpenRouter / AiHubMix 一档" },
-    };
-
-    const PLAN_INFO = {
-      claude_pro:       { name: "Claude Pro",        usd: 20 },
-      claude_max_5x:    { name: "Claude Max 5x",     usd: 100 },
-      claude_max_20x:   { name: "Claude Max 20x",    usd: 200 },
-      openai_plus:      { name: "ChatGPT Plus",      usd: 20 },
-      openai_pro_100:   { name: "ChatGPT Pro",       usd: 100 },
-      openai_pro_200:   { name: "ChatGPT Pro 20x",   usd: 200 },
+    const DEFAULT_CHANNEL_RATES = {
+      cheap: 2.5,
+      regular: 5.5,
+      official: USD_TO_CNY,
     };
 
     // ───── helpers ─────
@@ -706,37 +862,60 @@
       return total;
     }
 
+    function clampRate(value, fallback) {
+      const parsed = Number(value);
+      if (!Number.isFinite(parsed) || parsed <= 0) return fallback;
+      return Math.min(parsed, 999);
+    }
+
+    function formatRate(value) {
+      if (!Number.isFinite(value) || value <= 0) return "—";
+      const rounded = value < 10 ? value.toFixed(1) : value.toFixed(0);
+      return `¥${Number(rounded).toLocaleString("zh-CN")} / $1`;
+    }
+
+    function formatAmplification(value) {
+      if (!Number.isFinite(value) || value <= 0) return "—";
+      if (value >= 100) return `${Math.round(value)}x`;
+      if (value >= 10) return `${value.toFixed(1)}x`;
+      return `${value.toFixed(2)}x`;
+    }
+
     function computeTiers(persona, pricing) {
       const apiUsd = computeApiCostUsd(persona, pricing);
-      const planId = persona.recommended_plans?.[0];
+      const rates = state.channelRates;
+      const officialCny = apiUsd * rates.official;
 
-      const cheap = {
-        source: "廉价中转",
-        note:   `${CHANNEL_RATIO.cheap.source}，按 ¥${CHANNEL_RATIO.cheap.cny_per_usd}/$1`,
-        cny:    apiUsd * CHANNEL_RATIO.cheap.cny_per_usd,
+      return {
+        apiUsd,
+        officialCny,
+        tiers: [
+          {
+            id: "cheap",
+            source: "廉价中转",
+            note: "极端低价带，用来观察价格压缩上限",
+            rateLabel: formatRate(rates.cheap),
+            cny: apiUsd * rates.cheap,
+            amplification: officialCny > 0 ? officialCny / (apiUsd * rates.cheap) : 0,
+          },
+          {
+            id: "regular",
+            source: "正规中转",
+            note: "当前落地基线，可手调到你的常用中转",
+            rateLabel: formatRate(rates.regular),
+            cny: apiUsd * rates.regular,
+            amplification: officialCny > 0 ? officialCny / (apiUsd * rates.regular) : 0,
+          },
+          {
+            id: "official",
+            source: "官方 API 直购",
+            note: "最终对照基线，直接按官方 token 价格结算",
+            rateLabel: formatRate(rates.official),
+            cny: officialCny,
+            amplification: officialCny > 0 ? 1 : 0,
+          }
+        ]
       };
-      const mid = {
-        source: "正规中转",
-        note:   `${CHANNEL_RATIO.mid.source}，按 ¥${CHANNEL_RATIO.mid.cny_per_usd}/$1`,
-        cny:    apiUsd * CHANNEL_RATIO.mid.cny_per_usd,
-      };
-      let official;
-      if (planId === "official_api" || !planId) {
-        official = {
-          source: "官方 API 直购",
-          note:   `按你的用量直接调用，¥${USD_TO_CNY}/$1`,
-          cny:    apiUsd * USD_TO_CNY,
-        };
-      } else {
-        const info = PLAN_INFO[planId];
-        official = {
-          source: info?.name || planId,
-          note:   info ? `$${info.usd}/月 × ¥${USD_TO_CNY}/$1` : "官方订阅",
-          cny:    (info?.usd || 0) * USD_TO_CNY,
-        };
-      }
-
-      return { apiUsd, tiers: [cheap, mid, official] };
     }
 
     function fmtCny(value) {
@@ -874,6 +1053,11 @@
       profileTagline: document.getElementById("profileTagline"),
       radarMount:     document.getElementById("radarMount"),
       radarTotals:    document.getElementById("radarTotals"),
+      baselineUsd:    document.getElementById("baselineUsd"),
+      baselineOfficial: document.getElementById("baselineOfficial"),
+      regularRateInput: document.getElementById("regularRateInput"),
+      officialRateInput: document.getElementById("officialRateInput"),
+      cheapRateInput: document.getElementById("cheapRateInput"),
       priceList:      document.getElementById("priceList"),
       priceBaseline:  document.getElementById("priceBaseline"),
       error:          document.getElementById("errorBanner"),
@@ -885,6 +1069,7 @@
       radarConfig: null,
       activeId: null,
       stageMode: "hero",
+      channelRates: { ...DEFAULT_CHANNEL_RATES },
       previousTierCnys: [null, null, null],
       selectionTicket: 0,
     };
@@ -914,18 +1099,98 @@
       });
     }
 
-    function buildPriceTierHtml(t, rank) {
-      const rankLabel = ["最低", "中档", "最高"][rank];
+    function buildPriceTierHtml(t) {
       return `
-        <li class="price-tier" data-rank="${rank}">
-          <span class="tier-rank">${rankLabel}</span>
-          <span>
-            <span class="tier-source">${t.source}</span>
+        <tr class="price-tier${t.id === "regular" ? " is-baseline" : ""}" data-tier="${t.id}">
+          <td class="tier-rank">${t.source}</td>
+          <td>
+            <span class="tier-source">${t.rateLabel}</span>
             <span class="tier-note">${t.note}</span>
-          </span>
-          <span class="tier-amount" data-cny="${t.cny}">${fmtCny(t.cny)} / 月</span>
-        </li>
+          </td>
+          <td>
+            <span class="tier-amount" data-cny="${t.cny}">${fmtCny(t.cny)} / 月</span>
+          </td>
+          <td>
+            <span class="tier-multiplier">${formatAmplification(t.amplification)}</span>
+            <span class="tier-note">相对官方 API 的实付放大</span>
+          </td>
+        </tr>
       `;
+    }
+
+    function syncRateInputs() {
+      els.regularRateInput.value = String(state.channelRates.regular);
+      els.officialRateInput.value = String(state.channelRates.official);
+      els.cheapRateInput.value = String(state.channelRates.cheap);
+    }
+
+    function updatePriceSection(persona, { animate = false } = {}) {
+      const { apiUsd, officialCny, tiers } = computeTiers(persona, state.pricing);
+      els.baselineUsd.textContent = apiUsd <= 0 ? "—" : `${fmtUsd(apiUsd)} / 月`;
+      els.baselineOfficial.textContent = apiUsd <= 0
+        ? "当前画像没有默认月度用量。"
+        : `官方 API 直购约 ${fmtCny(officialCny)} / 月。`;
+      els.priceBaseline.textContent = apiUsd <= 0
+        ? "这个画像暂时没有默认月度用量，所以这里只保留渠道口径，不做月度实付比较。"
+        : `同一份 ${fmtUsd(apiUsd)} 的官方 API 等价用量，渠道单价越低，实付放大倍率越高；后续接入分项价后，这个差异还会继续扩大。`;
+
+      if (!animate || !els.priceList.children.length) {
+        els.priceList.innerHTML = tiers.map(t => buildPriceTierHtml(t)).join("");
+        state.previousTierCnys = tiers.map(t => t.cny);
+        return;
+      }
+
+      const tierEls = els.priceList.querySelectorAll(".price-tier");
+      tierEls.forEach(el => el.classList.add("is-morphing"));
+      requestAnimationFrame(() => {
+        tiers.forEach((t, i) => {
+          const row = tierEls[i];
+          if (!row) return;
+          row.classList.toggle("is-baseline", t.id === "regular");
+          row.querySelector(".tier-rank").textContent = t.source;
+          row.querySelector(".tier-source").textContent = t.rateLabel;
+          const notes = row.querySelectorAll(".tier-note");
+          notes[0].textContent = t.note;
+          notes[1].textContent = "相对官方 API 的实付放大";
+          row.querySelector(".tier-multiplier").textContent = formatAmplification(t.amplification);
+          const amountEl = row.querySelector(".tier-amount");
+          amountEl.dataset.cny = String(t.cny);
+          const prevCny = state.previousTierCnys[i] ?? t.cny;
+          morphNumber(amountEl, prevCny, t.cny);
+        });
+        state.previousTierCnys = tiers.map(t => t.cny);
+        requestAnimationFrame(() => {
+          tierEls.forEach(el => el.classList.remove("is-morphing"));
+        });
+      });
+    }
+
+    function refreshActivePricing() {
+      const persona = state.personas.find(p => p.id === state.activeId);
+      if (!persona || state.stageMode !== "snapshot") return;
+      updatePriceSection(persona, { animate: true });
+    }
+
+    function bindRateInputs() {
+      const controls = [
+        [els.regularRateInput, "regular"],
+        [els.officialRateInput, "official"],
+        [els.cheapRateInput, "cheap"],
+      ];
+
+      controls.forEach(([input, key]) => {
+        input.addEventListener("input", () => {
+          const parsed = Number(input.value);
+          if (!Number.isFinite(parsed) || parsed <= 0) return;
+          state.channelRates[key] = clampRate(parsed, state.channelRates[key]);
+          refreshActivePricing();
+        });
+        input.addEventListener("blur", () => {
+          state.channelRates[key] = clampRate(input.value, state.channelRates[key]);
+          input.value = String(state.channelRates[key]);
+          refreshActivePricing();
+        });
+      });
     }
 
     function renderSnapshotInitial(persona) {
@@ -939,14 +1204,7 @@
 
       const u = aggregateUsage(persona);
       els.radarTotals.textContent = formatUsageSummary(u);
-
-      const { apiUsd, tiers } = computeTiers(persona, state.pricing);
-      const sorted = [...tiers].sort((a, b) => a.cny - b.cny);
-      els.priceList.innerHTML = sorted.map((t, i) => buildPriceTierHtml(t, i)).join("");
-      state.previousTierCnys = sorted.map(t => t.cny);
-      els.priceBaseline.textContent = apiUsd <= 0
-        ? "API 基线：这一类用户没有默认用量画像。"
-        : `API 基线：这一类用量直接调用官方 API 约 ${fmtUsd(apiUsd)}/月。`;
+      updatePriceSection(persona);
     }
 
     async function morphSnapshot(persona, ticket = state.selectionTicket) {
@@ -955,7 +1213,7 @@
       morphRadarTo(newRadarValues);
 
       // 2) text labels (name, tagline, totals, baseline): cross-fade brief
-      const textTargets = [els.profileName, els.profileTagline, els.radarTotals, els.priceBaseline];
+      const textTargets = [els.profileName, els.profileTagline, els.radarTotals, els.baselineUsd, els.baselineOfficial, els.priceBaseline];
       textTargets.forEach(el => {
         el.style.transition = "opacity 220ms var(--ease-smooth), filter 220ms var(--ease-smooth)";
         el.style.opacity = "0";
@@ -968,40 +1226,14 @@
       els.profileTagline.textContent = persona.tagline || "";
       const u = aggregateUsage(persona);
       els.radarTotals.textContent = formatUsageSummary(u);
-      const { apiUsd, tiers } = computeTiers(persona, state.pricing);
-      const sorted = [...tiers].sort((a, b) => a.cny - b.cny);
 
       textTargets.forEach(el => {
         el.style.opacity = "";
         el.style.filter = "";
       });
-      els.priceBaseline.textContent = apiUsd <= 0
-        ? "API 基线：这一类用户没有默认用量画像。"
-        : `API 基线：这一类用量直接调用官方 API 约 ${fmtUsd(apiUsd)}/月。`;
-
-      // 3) price tiers: blur-out, swap source labels, animate numbers
-      const tierEls = els.priceList.querySelectorAll(".price-tier");
-      tierEls.forEach(el => el.classList.add("is-morphing"));
       await wait(220);
       if (ticket !== state.selectionTicket) return false;
-
-      // swap source / note text instantly while invisible
-      sorted.forEach((t, i) => {
-        const li = tierEls[i];
-        if (!li) return;
-        li.querySelector(".tier-source").textContent = t.source;
-        li.querySelector(".tier-note").textContent = t.note;
-        const amountEl = li.querySelector(".tier-amount");
-        amountEl.dataset.cny = String(t.cny);
-        const prevCny = state.previousTierCnys[i] ?? t.cny;
-        morphNumber(amountEl, prevCny, t.cny);
-      });
-      state.previousTierCnys = sorted.map(t => t.cny);
-
-      // fade back in
-      requestAnimationFrame(() => {
-        tierEls.forEach(el => el.classList.remove("is-morphing"));
-      });
+      updatePriceSection(persona, { animate: true });
       return true;
     }
 
@@ -1065,6 +1297,8 @@
         state.radarConfig = normalizeRadarConfig(radarRaw);
         if (!state.personas.length) throw new Error("personas.json 为空");
 
+        syncRateInputs();
+        bindRateInputs();
         renderPersonas();
 
         els.personaRow.addEventListener("click", e => {
