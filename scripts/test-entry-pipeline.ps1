@@ -132,9 +132,9 @@ function Test-Persona {
   Assert-True ($state.priceTierCount -eq 3) "$Id renders three price tiers"
   Assert-True (
     $state.priceTiers.Count -eq 3 -and
-    $state.priceTiers[0] -eq "cheap" -and
+    $state.priceTiers[0] -eq "official" -and
     $state.priceTiers[1] -eq "regular" -and
-    $state.priceTiers[2] -eq "official"
+    $state.priceTiers[2] -eq "custom"
   ) "$Id keeps the fixed channel comparison order"
   Assert-True ($state.bodyOverflow -eq "hidden") "$Id keeps the page in one-screen mode"
   Assert-True ($state.scrollHeight -le ($state.viewportHeight + 2)) "$Id does not require vertical scrolling"
@@ -162,9 +162,9 @@ function Test-RapidSwitching {
   Assert-True ($state.radarPointCount -eq 5) "rapid switching keeps the radar polygon valid"
   Assert-True ($state.priceTiers.Count -eq 3) "rapid switching keeps the price tier block valid"
   Assert-True (
-    $state.priceTiers[0] -eq "cheap" -and
+    $state.priceTiers[0] -eq "official" -and
     $state.priceTiers[1] -eq "regular" -and
-    $state.priceTiers[2] -eq "official"
+    $state.priceTiers[2] -eq "custom"
   ) "rapid switching keeps the fixed channel comparison order"
 }
 
