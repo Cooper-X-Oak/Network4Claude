@@ -83,6 +83,10 @@ function Get-UiState {
     "priceAmounts: Array.from(document.querySelectorAll('#priceList .tier-amount')).map(el => el.textContent || ''),",
     "priceAmountValues: Array.from(document.querySelectorAll('#priceList .tier-amount')).map(el => Number(el.dataset.cny || 0)),",
     "hasWorkbench: !!document.getElementById('workbench'),",
+    "bodyOverflow: getComputedStyle(document.body).overflow,",
+    "pageHeight: document.querySelector('.page')?.getBoundingClientRect().height || 0,",
+    "scrollHeight: document.documentElement.scrollHeight,",
+    "viewportHeight: window.innerHeight,",
     "snapshotChartRect: rect('.snapshot-chart'),",
     "snapshotPricesRect: rect('.snapshot-prices'),",
     "personasSectionRect: rect('.personas-section')",
@@ -125,6 +129,8 @@ function Test-Persona {
   Assert-True ($state.radarDotCount -eq 5) "$Id renders five radar dots"
   Assert-True ($state.radarLabelCount -eq 5) "$Id renders five radar axis labels"
   Assert-True ($state.priceTierCount -eq 3) "$Id renders three price tiers"
+  Assert-True ($state.bodyOverflow -eq "hidden") "$Id keeps the page in one-screen mode"
+  Assert-True ($state.scrollHeight -le ($state.viewportHeight + 2)) "$Id does not require vertical scrolling"
   Assert-True (
     $state.snapshotChartRect.bottom -le $state.personasSectionRect.top -and
     $state.snapshotPricesRect.bottom -le $state.personasSectionRect.top
