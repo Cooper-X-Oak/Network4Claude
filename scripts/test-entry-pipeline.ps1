@@ -57,6 +57,12 @@ function Invoke-Playwright {
 function Get-UiState {
   $script = @(
     "() => {",
+    "const rect = (selector) => {",
+    "  const el = document.querySelector(selector);",
+    "  if (!el) return null;",
+    "  const r = el.getBoundingClientRect();",
+    "  return { top: r.top, bottom: r.bottom, height: r.height, width: r.width };",
+    "};",
     "const radarPoints = (document.getElementById('radarData')?.getAttribute('points') || '').split(/\s+/).filter(Boolean);",
     "return {",
     "url: location.href,",
@@ -76,7 +82,10 @@ function Get-UiState {
     "priceSources: Array.from(document.querySelectorAll('#priceList .tier-source')).map(el => el.textContent || ''),",
     "priceAmounts: Array.from(document.querySelectorAll('#priceList .tier-amount')).map(el => el.textContent || ''),",
     "priceAmountValues: Array.from(document.querySelectorAll('#priceList .tier-amount')).map(el => Number(el.dataset.cny || 0)),",
-    "hasWorkbench: !!document.getElementById('workbench')",
+    "hasWorkbench: !!document.getElementById('workbench'),",
+    "snapshotChartRect: rect('.snapshot-chart'),",
+    "snapshotPricesRect: rect('.snapshot-prices'),",
+    "personasSectionRect: rect('.personas-section')",
     "};",
     "}"
   ) -join " "
@@ -116,6 +125,10 @@ function Test-Persona {
   Assert-True ($state.radarDotCount -eq 5) "$Id renders five radar dots"
   Assert-True ($state.radarLabelCount -eq 5) "$Id renders five radar axis labels"
   Assert-True ($state.priceTierCount -eq 3) "$Id renders three price tiers"
+  Assert-True (
+    $state.snapshotChartRect.bottom -le $state.personasSectionRect.top -and
+    $state.snapshotPricesRect.bottom -le $state.personasSectionRect.top
+  ) "$Id keeps the radar and price section above the persona cards"
 
   if ($Id -eq "api_integration") {
     Assert-True ($state.priceAmountValues[-1] -eq 0) "api_integration shows zero monthly baseline cost in the current implementation"
