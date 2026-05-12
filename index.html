@@ -584,18 +584,6 @@
       openai_pro_200:   { name: "ChatGPT Pro 20x",   usd: 200 },
     };
 
-    const RADAR_LEVEL_MAX = 6;
-
-    const RADAR_BUCKETS = {
-      input: [50_000, 200_000, 2_000_000, 20_000_000, 200_000_000],
-      output: [10_000, 50_000, 300_000, 2_000_000, 20_000_000],
-      cacheRead: [10_000, 100_000, 1_000_000, 50_000_000, 1_000_000_000],
-      cacheWrite: [0, 100_000, 1_000_000, 10_000_000, 50_000_000],
-      total: [100_000, 1_000_000, 20_000_000, 200_000_000, 2_000_000_000],
-    };
-
-    const RADAR_AXES = ["输入", "输出", "缓存读", "缓存写", "总用量"];
-
     // ───── helpers ─────
 
     const wait = ms => new Promise(r => setTimeout(r, ms));
@@ -605,6 +593,41 @@
       const r = await fetch(path, { cache: "no-store" });
       if (!r.ok) throw new Error(`${path} → HTTP ${r.status}`);
       return r.json();
+    }
+
+    function normalizeRadarConfig(raw) {
+      const levelMax = Number(raw?.level_max || 0);
+      const axes = Array.isArray(raw?.axes) ? raw.axes : [];
+      if (!levelMax) throw new Error("radar-axis-levels.json 缺少 level_max");
+      if (!axes.length) throw new Error("radar-axis-levels.json 缺少 axes");
+
+      const normalizedAxes = axes.map(axis => {
+        if (!axis?.id || !axis?.label) {
+          throw new Error("radar-axis-levels.json 存在缺少 id/label 的 axis");
+        }
+        if (!Array.isArray(axis.levels) || axis.levels.length !== levelMax) {
+          throw new Error(`radar-axis-levels.json 的 axis ${axis.id} level 数量不等于 ${levelMax}`);
+        }
+        return {
+          id: axis.id,
+          label: axis.label,
+          aggregateField: axis.aggregate_field || axis.id,
+          levels: axis.levels.map(level => ({
+            level: Number(level.level),
+            maxExclusive: level.max_exclusive == null ? null : Number(level.max_exclusive),
+          })),
+        };
+      });
+
+      return { levelMax, axes: normalizedAxes };
+    }
+
+    function getRadarAxes() {
+      return state.radarConfig?.axes || [];
+    }
+
+    function getRadarLevelMax() {
+      return state.radarConfig?.levelMax || 6;
     }
 
     function aggregateUsage(persona) {
@@ -618,30 +641,29 @@
       return sums;
     }
 
-    function levelFromBuckets(value, buckets) {
+    function levelFromAxis(value, axis) {
+      const levelMax = getRadarLevelMax();
       if (!value || value <= 0) return 1;
-      for (let i = 0; i < buckets.length; i += 1) {
-        if (value < buckets[i]) return i + 1;
+      for (const level of axis.levels) {
+        if (level.maxExclusive != null && value < level.maxExclusive) {
+          return level.level;
+        }
       }
-      return RADAR_LEVEL_MAX;
+      return levelMax;
     }
 
     function computeRadarValues(persona) {
+      const axes = getRadarAxes();
       const me = aggregateUsage(persona);
       const total = me.input + me.output + me.cacheRead + me.cacheWrite;
-      if (total <= 0) return [0, 0, 0, 0, 0];
+      if (!axes.length) return [];
+      if (total <= 0) return Array.from({ length: axes.length }, () => 0);
 
-      const levels = [
-        levelFromBuckets(me.input, RADAR_BUCKETS.input),
-        levelFromBuckets(me.output, RADAR_BUCKETS.output),
-        levelFromBuckets(me.cacheRead, RADAR_BUCKETS.cacheRead),
-        levelFromBuckets(me.cacheWrite, RADAR_BUCKETS.cacheWrite),
-        levelFromBuckets(total, RADAR_BUCKETS.total),
-      ];
-
-      return [
-        ...levels.map(level => level / RADAR_LEVEL_MAX),
-      ];
+      const levelMax = getRadarLevelMax();
+      return axes.map(axis => {
+        const axisValue = axis.aggregateField === "total" ? total : (me[axis.aggregateField] || 0);
+        return levelFromAxis(axisValue, axis) / levelMax;
+      });
     }
 
     function computeApiCostUsd(persona, pricing) {
@@ -719,8 +741,8 @@
 
     // ───── radar svg (with interpolated morph) ─────
 
-    const RADAR_GEO = (() => {
-      const N = 5;
+    function getRadarGeo() {
+      const N = getRadarAxes().length || 5;
       const cx = 160, cy = 160, r = 100;
       const angleAt = i => -Math.PI / 2 + (i / N) * Math.PI * 2;
       return {
@@ -731,11 +753,12 @@
         },
         angleAt,
       };
-    })();
+    }
 
     function buildRadarShell() {
-      const { N, cx, cy, pointAt, angleAt } = RADAR_GEO;
-      const rings = Array.from({ length: RADAR_LEVEL_MAX }, (_, i) => (i + 1) / RADAR_LEVEL_MAX).map(s => {
+      const { N, cx, cy, pointAt, angleAt } = getRadarGeo();
+      const levelMax = getRadarLevelMax();
+      const rings = Array.from({ length: levelMax }, (_, i) => (i + 1) / levelMax).map(s => {
         const pts = Array.from({ length: N }, (_, i) => pointAt(s, i).map(n => n.toFixed(2)).join(","));
         return `<polygon points="${pts.join(" ")}"/>`;
       }).join("");
@@ -743,13 +766,13 @@
         const [x, y] = pointAt(1.0, i);
         return `<line x1="${cx}" y1="${cy}" x2="${x.toFixed(2)}" y2="${y.toFixed(2)}"/>`;
       }).join("");
-      const labels = RADAR_AXES.map((label, i) => {
+      const labels = getRadarAxes().map((axis, i) => {
         const [x, y] = pointAt(1.26, i);
         const angle = angleAt(i);
         let anchor = "middle";
         if (Math.cos(angle) > 0.3) anchor = "start";
         else if (Math.cos(angle) < -0.3) anchor = "end";
-        return `<text class="radar-label" x="${x.toFixed(2)}" y="${y.toFixed(2)}" text-anchor="${anchor}" dominant-baseline="middle">${label}</text>`;
+        return `<text class="radar-label" x="${x.toFixed(2)}" y="${y.toFixed(2)}" text-anchor="${anchor}" dominant-baseline="middle">${axis.label}</text>`;
       }).join("");
 
       return `
@@ -764,7 +787,7 @@
     }
 
     function renderRadarFromValues(values) {
-      const { N, pointAt } = RADAR_GEO;
+      const { N, pointAt } = getRadarGeo();
       const visible = values.map(v => Math.max(v, 0.02));
       const pts = visible.map((v, i) => pointAt(v, i).map(n => n.toFixed(2)).join(","));
       document.getElementById("radarData").setAttribute("points", pts.join(" "));
@@ -835,6 +858,7 @@
     const state = {
       personas: [],
       pricing: null,
+      radarConfig: null,
       activeId: null,
       stageMode: "hero",
       previousTierCnys: [null, null, null],
@@ -1015,12 +1039,14 @@
 
     async function init() {
       try {
-        const [pricingRaw, personasRaw] = await Promise.all([
+        const [pricingRaw, personasRaw, radarRaw] = await Promise.all([
           loadJson("./data/pricing.json"),
           loadJson("./data/personas.json"),
+          loadJson("./data/radar-axis-levels.json"),
         ]);
         state.pricing = pricingRaw;
         state.personas = personasRaw.personas || [];
+        state.radarConfig = normalizeRadarConfig(radarRaw);
         if (!state.personas.length) throw new Error("personas.json 为空");
 
         renderPersonas();

@@ -24,6 +24,7 @@ Use these as the active sources of truth:
 - `data/personas.json`: active landing-page personas and their typical monthly usage profiles.
 - `data/channels.json`: active channel catalog, price-data status, and risk dimensions.
 - `data/channel-presets.json`: planning presets for price bands and curve visualizations.
+- `data/radar-axis-levels.json`: machine-readable 1-6 grading definitions for the landing-page usage radar.
 - `docs/08-calculator-design.md`: current product model, formulas, scenarios, channel risk model, and recommendation logic.
 - `docs/09-precision-calculation-engine.md`: calculation engine schema and deterministic usage-to-cost chain.
 - `scripts/cost-engine.mjs`: reusable precision calculation implementation.
