@@ -60,6 +60,14 @@
       gap: 20px;
     }
 
+    .workbench {
+      flex: 1 1 auto;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
     /* ───── masthead ───── */
 
     .masthead {
@@ -514,7 +522,8 @@
       </span>
     </header>
 
-    <div class="stage" id="stage" data-mode="hero">
+    <main class="workbench" id="workbench" aria-label="完整工作台">
+      <div class="stage" id="stage" data-mode="hero">
 
       <section class="stage-hero" id="stageHero" aria-label="开场">
         <h1>你在为 <span class="ink-accent">AI</span> 付多少钱？</h1>
@@ -530,7 +539,7 @@
 
         <div class="snapshot-grid">
           <div class="snapshot-chart">
-            <p class="panel-cap">用量与工作风格</p>
+            <p class="panel-cap">用量分级雷达</p>
             <div id="radarMount"></div>
             <p class="radar-totals" id="radarTotals">—</p>
           </div>
@@ -542,12 +551,13 @@
         </div>
       </section>
 
-    </div>
+      </div>
 
-    <section class="personas-section" aria-label="使用画像">
+      <section class="personas-section" aria-label="使用画像">
       <p class="section-prompt">你看起来像</p>
       <div class="persona-row" id="personaRow" role="radiogroup" aria-label="使用画像"></div>
-    </section>
+      </section>
+    </main>
 
     <footer class="colophon">
       <span>Network4Claude · 开源的 AI 订阅价格地图</span>
@@ -574,12 +584,17 @@
       openai_pro_200:   { name: "ChatGPT Pro 20x",   usd: 200 },
     };
 
-    const INTENSITY_MAP = {
-      light: 0.18, light_medium: 0.32, medium: 0.52,
-      medium_heavy: 0.72, heavy: 1.00, variable: 0.50,
+    const RADAR_LEVEL_MAX = 6;
+
+    const RADAR_BUCKETS = {
+      input: [50_000, 200_000, 2_000_000, 20_000_000, 200_000_000],
+      output: [10_000, 50_000, 300_000, 2_000_000, 20_000_000],
+      cacheRead: [10_000, 100_000, 1_000_000, 50_000_000, 1_000_000_000],
+      cacheWrite: [0, 100_000, 1_000_000, 10_000_000, 50_000_000],
+      total: [100_000, 1_000_000, 20_000_000, 200_000_000, 2_000_000_000],
     };
 
-    const RADAR_AXES = ["输入", "输出", "缓存读", "缓存写", "持续度"];
+    const RADAR_AXES = ["输入", "输出", "缓存读", "缓存写", "总用量"];
 
     // ───── helpers ─────
 
@@ -597,32 +612,35 @@
       for (const u of Object.values(persona?.monthly_usage?.by_model || {})) {
         sums.input      += u.input || 0;
         sums.output     += u.output || 0;
-        sums.cacheRead  += u.cache_read || 0;
+        sums.cacheRead  += (u.cache_read || 0) + (u.cached_input || 0);
         sums.cacheWrite += (u.cache_write_5m || 0) + (u.cache_write_1h || 0);
       }
       return sums;
     }
 
-    function sqrtNorm(v, max) {
-      if (!max || !v || v <= 0) return 0;
-      return Math.sqrt(Math.min(v / max, 1));
+    function levelFromBuckets(value, buckets) {
+      if (!value || value <= 0) return 1;
+      for (let i = 0; i < buckets.length; i += 1) {
+        if (value < buckets[i]) return i + 1;
+      }
+      return RADAR_LEVEL_MAX;
     }
 
-    function computeRadarValues(persona, allPersonas) {
-      const aggregates = allPersonas.map(aggregateUsage);
-      const max = aggregates.reduce((acc, a) => ({
-        input: Math.max(acc.input, a.input),
-        output: Math.max(acc.output, a.output),
-        cacheRead: Math.max(acc.cacheRead, a.cacheRead),
-        cacheWrite: Math.max(acc.cacheWrite, a.cacheWrite),
-      }), { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 });
+    function computeRadarValues(persona) {
       const me = aggregateUsage(persona);
+      const total = me.input + me.output + me.cacheRead + me.cacheWrite;
+      if (total <= 0) return [0, 0, 0, 0, 0];
+
+      const levels = [
+        levelFromBuckets(me.input, RADAR_BUCKETS.input),
+        levelFromBuckets(me.output, RADAR_BUCKETS.output),
+        levelFromBuckets(me.cacheRead, RADAR_BUCKETS.cacheRead),
+        levelFromBuckets(me.cacheWrite, RADAR_BUCKETS.cacheWrite),
+        levelFromBuckets(total, RADAR_BUCKETS.total),
+      ];
+
       return [
-        sqrtNorm(me.input, max.input),
-        sqrtNorm(me.output, max.output),
-        sqrtNorm(me.cacheRead, max.cacheRead),
-        sqrtNorm(me.cacheWrite, max.cacheWrite),
-        INTENSITY_MAP[persona.intensity] ?? 0.5,
+        ...levels.map(level => level / RADAR_LEVEL_MAX),
       ];
     }
 
@@ -631,11 +649,12 @@
       const models = pricing?.models || {};
       for (const [key, u] of Object.entries(persona?.monthly_usage?.by_model || {})) {
         const lookup = key.replace(/^claude_/, "");
-        const m = models[lookup] || models.sonnet_4_6;
+        const m = models[lookup];
         if (!m) continue;
+        const cachedInputPrice = m.cached_input ?? m.cache_read ?? 0;
         total += (u.input || 0)          / 1e6 * (m.base_input || 0);
         total += (u.output || 0)         / 1e6 * (m.output || 0);
-        total += (u.cache_read || 0)     / 1e6 * (m.cache_read || 0);
+        total += ((u.cache_read || 0) + (u.cached_input || 0)) / 1e6 * cachedInputPrice;
         total += (u.cache_write_5m || 0) / 1e6 * (m.cache_write_5m || 0);
         total += (u.cache_write_1h || 0) / 1e6 * (m.cache_write_1h || 0);
       }
@@ -716,7 +735,7 @@
 
     function buildRadarShell() {
       const { N, cx, cy, pointAt, angleAt } = RADAR_GEO;
-      const rings = [0.25, 0.5, 0.75, 1.0].map(s => {
+      const rings = Array.from({ length: RADAR_LEVEL_MAX }, (_, i) => (i + 1) / RADAR_LEVEL_MAX).map(s => {
         const pts = Array.from({ length: N }, (_, i) => pointAt(s, i).map(n => n.toFixed(2)).join(","));
         return `<polygon points="${pts.join(" ")}"/>`;
       }).join("");
@@ -734,7 +753,7 @@
       }).join("");
 
       return `
-        <svg class="radar" viewBox="0 0 320 320" role="img" aria-label="用量画像雷达图">
+        <svg class="radar" viewBox="0 0 320 320" role="img" aria-label="用量分级雷达图">
           <g class="radar-rings">${rings}</g>
           <g class="radar-axes">${axes}</g>
           <polygon class="radar-data" id="radarData" points=""/>
@@ -819,6 +838,7 @@
       activeId: null,
       stageMode: "hero",
       previousTierCnys: [null, null, null],
+      selectionTicket: 0,
     };
 
     // ───── render ─────
@@ -864,7 +884,7 @@
       els.profileName.textContent = persona.name;
       els.profileTagline.textContent = persona.tagline || "";
 
-      const radarValues = computeRadarValues(persona, state.personas);
+      const radarValues = computeRadarValues(persona);
       els.radarMount.innerHTML = buildRadarShell();
       radarCurrentValues = null;  // first render — no morph
       morphRadarTo(radarValues);
@@ -885,9 +905,9 @@
         : `API 基线：这一类用量直接调用官方 API 约 ${fmtUsd(apiUsd)}/月。`;
     }
 
-    async function morphSnapshot(persona) {
+    async function morphSnapshot(persona, ticket = state.selectionTicket) {
       // 1) radar: continuous polygon morph
-      const newRadarValues = computeRadarValues(persona, state.personas);
+      const newRadarValues = computeRadarValues(persona);
       morphRadarTo(newRadarValues);
 
       // 2) text labels (name, tagline, totals, baseline): cross-fade brief
@@ -898,6 +918,7 @@
         el.style.filter = "blur(3px)";
       });
       await wait(220);
+      if (ticket !== state.selectionTicket) return false;
 
       els.profileName.textContent = persona.name;
       els.profileTagline.textContent = persona.tagline || "";
@@ -922,6 +943,7 @@
       const tierEls = els.priceList.querySelectorAll(".price-tier");
       tierEls.forEach(el => el.classList.add("is-morphing"));
       await wait(220);
+      if (ticket !== state.selectionTicket) return false;
 
       // swap source / note text instantly while invisible
       sorted.forEach((t, i) => {
@@ -930,6 +952,7 @@
         li.querySelector(".tier-source").textContent = t.source;
         li.querySelector(".tier-note").textContent = t.note;
         const amountEl = li.querySelector(".tier-amount");
+        amountEl.dataset.cny = String(t.cny);
         const prevCny = state.previousTierCnys[i] ?? t.cny;
         morphNumber(amountEl, prevCny, t.cny);
       });
@@ -939,27 +962,34 @@
       requestAnimationFrame(() => {
         tierEls.forEach(el => el.classList.remove("is-morphing"));
       });
+      return true;
     }
 
-    async function transitionHeroToSnapshot(persona) {
+    async function transitionHeroToSnapshot(persona, ticket) {
       renderSnapshotInitial(persona);
       els.stage.dataset.mode = "snapshot";
       state.stageMode = "snapshot";
       // wait for transition to complete before allowing rapid re-morphs
       await wait(600);
+      return ticket === state.selectionTicket;
     }
 
     async function selectPersona(id) {
       const persona = state.personas.find(p => p.id === id);
       if (!persona) return;
       const isSame = state.activeId === id;
+      const ticket = ++state.selectionTicket;
       state.activeId = id;
       syncCardStates();
 
       if (state.stageMode === "hero") {
-        await transitionHeroToSnapshot(persona);
+        const stillLatest = await transitionHeroToSnapshot(persona, ticket);
+        if (!stillLatest && state.activeId) {
+          const latestPersona = state.personas.find(p => p.id === state.activeId);
+          if (latestPersona) await morphSnapshot(latestPersona, state.selectionTicket);
+        }
       } else if (!isSame) {
-        await morphSnapshot(persona);
+        await morphSnapshot(persona, ticket);
       }
     }
 

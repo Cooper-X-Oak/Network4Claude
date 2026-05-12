@@ -1,11 +1,16 @@
 {
-  "source": "Anthropic Claude pricing documentation",
+  "source": "Official provider pricing documentation",
   "source_url": "https://docs.anthropic.com/en/docs/about-claude/pricing",
-  "updated_at": "2026-05-09",
+  "source_urls": [
+    "https://docs.anthropic.com/en/docs/about-claude/pricing",
+    "https://help.openai.com/en/articles/20001106-codex-rate-card"
+  ],
+  "updated_at": "2026-05-12",
   "currency": "USD",
   "unit": "1M tokens",
   "models": {
     "opus_4_7": {
+      "provider": "anthropic",
       "display_name": "Claude Opus 4.7",
       "base_input": 5,
       "cache_write_5m": 6.25,
@@ -14,6 +19,7 @@
       "output": 25
     },
     "sonnet_4_6": {
+      "provider": "anthropic",
       "display_name": "Claude Sonnet 4.6",
       "base_input": 3,
       "cache_write_5m": 3.75,
@@ -22,12 +28,58 @@
       "output": 15
     },
     "haiku_4_5": {
+      "provider": "anthropic",
       "display_name": "Claude Haiku 4.5",
       "base_input": 1,
       "cache_write_5m": 1.25,
       "cache_write_1h": 2,
       "cache_read": 0.1,
       "output": 5
+    },
+    "gpt_5_5": {
+      "provider": "openai",
+      "display_name": "GPT-5.5",
+      "base_input": 125,
+      "cached_input": 12.5,
+      "cache_write_5m": 0,
+      "cache_write_1h": 0,
+      "output": 750
+    },
+    "gpt_5_4": {
+      "provider": "openai",
+      "display_name": "GPT-5.4",
+      "base_input": 62.5,
+      "cached_input": 6.25,
+      "cache_write_5m": 0,
+      "cache_write_1h": 0,
+      "output": 375
+    },
+    "gpt_5_4_mini": {
+      "provider": "openai",
+      "display_name": "GPT-5.4 Mini",
+      "base_input": 18.75,
+      "cached_input": 1.875,
+      "cache_write_5m": 0,
+      "cache_write_1h": 0,
+      "output": 113
+    },
+    "gpt_5_3_codex": {
+      "provider": "openai",
+      "display_name": "GPT-5.3 Codex",
+      "base_input": 43.75,
+      "cached_input": 4.375,
+      "cache_write_5m": 0,
+      "cache_write_1h": 0,
+      "output": 350
+    },
+    "gpt_5_2": {
+      "provider": "openai",
+      "display_name": "GPT-5.2",
+      "base_input": 43.75,
+      "cached_input": 4.375,
+      "cache_write_5m": 0,
+      "cache_write_1h": 0,
+      "output": 350
     }
   }
 }
