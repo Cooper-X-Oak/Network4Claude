@@ -1,11 +1,11 @@
 {
   "updated_at": "2026-05-12",
-  "version": 2,
+  "version": 3,
   "level_max": 6,
   "notes": [
     "This file is the machine-readable truth source for the entry-page usage radar.",
-    "The 2026-05-12 recalibration rebases persona scale to 250M / 500M / 1B / 2B / 20B / 100B monthly totals.",
-    "Each axis uses independent 1-6 semantic grading instead of global value/max normalization."
+    "The total axis now means interaction total only: input + output.",
+    "Cache read and cache write remain separate style-intensity axes and must not be folded back into interaction total."
   ],
   "axes": [
     {
@@ -15,12 +15,12 @@
       "aggregate_field": "input",
       "question": "这个 persona 每月大概会喂给模型多少原始输入？",
       "levels": [
-        { "level": 1, "max_exclusive": 100000000, "range_label": "< 100M", "meaning": "低输入负载，更多依赖已有上下文和短问答" },
-        { "level": 2, "max_exclusive": 250000000, "range_label": "100M - 250M", "meaning": "轻度到中度输入，稳定但不沉重" },
-        { "level": 3, "max_exclusive": 500000000, "range_label": "250M - 500M", "meaning": "中等输入密度，已经形成清晰工作习惯" },
-        { "level": 4, "max_exclusive": 1000000000, "range_label": "500M - 1B", "meaning": "高输入负载，大量工作先经过 AI" },
-        { "level": 5, "max_exclusive": 10000000000, "range_label": "1B - 10B", "meaning": "重度输入依赖，接近系统性工作流" },
-        { "level": 6, "min_inclusive": 10000000000, "range_label": ">= 10B", "meaning": "超高输入规模，接近产品级 API 负载" }
+        { "level": 1, "max_exclusive": 200000000, "range_label": "< 200M", "meaning": "轻量输入，更多是零散问答与短上下文" },
+        { "level": 2, "max_exclusive": 500000000, "range_label": "200M - 500M", "meaning": "稳定中低输入密度" },
+        { "level": 3, "max_exclusive": 2000000000, "range_label": "500M - 2B", "meaning": "中高输入负载，已形成明确工作习惯" },
+        { "level": 4, "max_exclusive": 10000000000, "range_label": "2B - 10B", "meaning": "高输入负载，大量工作先经过 AI" },
+        { "level": 5, "max_exclusive": 40000000000, "range_label": "10B - 40B", "meaning": "重度输入依赖，接近产品级工作流" },
+        { "level": 6, "min_inclusive": 40000000000, "range_label": ">= 40B", "meaning": "超高输入规模，已经进入大规模 API 负载" }
       ]
     },
     {
@@ -30,12 +30,12 @@
       "aggregate_field": "output",
       "question": "这个 persona 每月大概会从模型拿回多少输出？",
       "levels": [
-        { "level": 1, "max_exclusive": 30000000, "range_label": "< 30M", "meaning": "低输出，主要是短答和局部补全" },
-        { "level": 2, "max_exclusive": 60000000, "range_label": "30M - 60M", "meaning": "轻度稳定输出" },
-        { "level": 3, "max_exclusive": 200000000, "range_label": "60M - 200M", "meaning": "中等输出，常用于整理与写作" },
-        { "level": 4, "max_exclusive": 500000000, "range_label": "200M - 500M", "meaning": "高输出，明显依赖模型产出" },
-        { "level": 5, "max_exclusive": 2000000000, "range_label": "500M - 2B", "meaning": "重度输出依赖，内容生产密集" },
-        { "level": 6, "min_inclusive": 2000000000, "range_label": ">= 2B", "meaning": "超高输出规模，已经是产品级流量" }
+        { "level": 1, "max_exclusive": 100000000, "range_label": "< 100M", "meaning": "低输出，更多是短答与局部补全" },
+        { "level": 2, "max_exclusive": 300000000, "range_label": "100M - 300M", "meaning": "轻度到中度输出" },
+        { "level": 3, "max_exclusive": 1000000000, "range_label": "300M - 1B", "meaning": "高输出，明显依赖模型产出" },
+        { "level": 4, "max_exclusive": 5000000000, "range_label": "1B - 5B", "meaning": "重度输出依赖，内容生产密集" },
+        { "level": 5, "max_exclusive": 20000000000, "range_label": "5B - 20B", "meaning": "超高输出规模，接近产品级流量" },
+        { "level": 6, "min_inclusive": 20000000000, "range_label": ">= 20B", "meaning": "大规模 API 产出负载" }
       ]
     },
     {
@@ -46,11 +46,11 @@
       "question": "这个 persona 每月大概复用了多少已缓存上下文？",
       "levels": [
         { "level": 1, "max_exclusive": 50000000, "range_label": "< 50M", "meaning": "几乎不依赖缓存复用" },
-        { "level": 2, "max_exclusive": 150000000, "range_label": "50M - 150M", "meaning": "轻度缓存复用" },
-        { "level": 3, "max_exclusive": 500000000, "range_label": "150M - 500M", "meaning": "中等缓存复用，已有重复上下文" },
-        { "level": 4, "max_exclusive": 5000000000, "range_label": "500M - 5B", "meaning": "高缓存复用，工作流上下文沉淀明显" },
-        { "level": 5, "max_exclusive": 30000000000, "range_label": "5B - 30B", "meaning": "重度缓存复用，偏系统级协作/编码场景" },
-        { "level": 6, "min_inclusive": 30000000000, "range_label": ">= 30B", "meaning": "超高缓存复用，接近产品级 API 规模" }
+        { "level": 2, "max_exclusive": 500000000, "range_label": "50M - 500M", "meaning": "轻度缓存复用" },
+        { "level": 3, "max_exclusive": 5000000000, "range_label": "500M - 5B", "meaning": "中高缓存复用，工作流开始沉淀上下文" },
+        { "level": 4, "max_exclusive": 20000000000, "range_label": "5B - 20B", "meaning": "高缓存复用，明显是项目型/开发型工作流" },
+        { "level": 5, "max_exclusive": 100000000000, "range_label": "20B - 100B", "meaning": "超高缓存复用，偏系统级协作或持续开发" },
+        { "level": 6, "min_inclusive": 100000000000, "range_label": ">= 100B", "meaning": "极高缓存复用，已是大型产品/API 工作负载风格" }
       ]
     },
     {
@@ -61,26 +61,26 @@
       "question": "这个 persona 每月大概写入了多少可复用缓存？",
       "levels": [
         { "level": 1, "max_exclusive": 1, "range_label": "0", "meaning": "基本不写缓存" },
-        { "level": 2, "max_exclusive": 10000000, "range_label": "1 - 10M", "meaning": "轻度缓存写入" },
-        { "level": 3, "max_exclusive": 100000000, "range_label": "10M - 100M", "meaning": "中等缓存写入，开始经营上下文复用" },
-        { "level": 4, "max_exclusive": 1000000000, "range_label": "100M - 1B", "meaning": "高缓存写入，明显在为后续任务铺垫" },
-        { "level": 5, "max_exclusive": 5000000000, "range_label": "1B - 5B", "meaning": "重度缓存写入，把缓存当作效率资产" },
-        { "level": 6, "min_inclusive": 5000000000, "range_label": ">= 5B", "meaning": "超高缓存写入投入，接近产品级 API 工作流" }
+        { "level": 2, "max_exclusive": 50000000, "range_label": "1 - 50M", "meaning": "轻度缓存写入" },
+        { "level": 3, "max_exclusive": 500000000, "range_label": "50M - 500M", "meaning": "中等缓存写入，开始经营上下文复用" },
+        { "level": 4, "max_exclusive": 5000000000, "range_label": "500M - 5B", "meaning": "高缓存写入，明显在为后续任务铺垫" },
+        { "level": 5, "max_exclusive": 20000000000, "range_label": "5B - 20B", "meaning": "重度缓存写入，把缓存当作效率资产" },
+        { "level": 6, "min_inclusive": 20000000000, "range_label": ">= 20B", "meaning": "大型产品/API 级缓存写入投入" }
       ]
     },
     {
-      "id": "total",
-      "label": "总用量",
+      "id": "interactionTotal",
+      "label": "交互总量",
       "kind": "quantitative",
-      "aggregate_field": "total",
-      "question": "这个 persona 在一个月里总体会消耗到什么量级？",
+      "aggregate_field": "interactionTotal",
+      "question": "这个 persona 在一个月里真实和模型交互了多少量？",
       "levels": [
-        { "level": 1, "max_exclusive": 250000000, "range_label": "< 250M", "meaning": "低于当前入口页六张卡的最轻量级" },
-        { "level": 2, "max_exclusive": 500000000, "range_label": "250M - 500M", "meaning": "轻量稳定使用" },
+        { "level": 1, "max_exclusive": 250000000, "range_label": "< 250M", "meaning": "低于当前六张卡的最轻量级交互负载" },
+        { "level": 2, "max_exclusive": 500000000, "range_label": "250M - 500M", "meaning": "轻量稳定交互" },
         { "level": 3, "max_exclusive": 1000000000, "range_label": "500M - 1B", "meaning": "中等规模，已经形成明确习惯" },
-        { "level": 4, "max_exclusive": 2000000000, "range_label": "1B - 2B", "meaning": "高强度使用，很多工作都会先过 AI" },
-        { "level": 5, "max_exclusive": 20000000000, "range_label": "2B - 20B", "meaning": "重度依赖，月度总量进入十亿到百亿级" },
-        { "level": 6, "min_inclusive": 20000000000, "range_label": ">= 20B", "meaning": "超高总量，接近或进入产品级 API 负载" }
+        { "level": 4, "max_exclusive": 2000000000, "range_label": "1B - 2B", "meaning": "高强度个人交互，很多工作都会先过 AI" },
+        { "level": 5, "max_exclusive": 20000000000, "range_label": "2B - 20B", "meaning": "重度依赖，交互量进入十亿到百亿级" },
+        { "level": 6, "min_inclusive": 20000000000, "range_label": ">= 20B", "meaning": "超高交互总量，接近或进入产品级负载" }
       ]
     }
   ]

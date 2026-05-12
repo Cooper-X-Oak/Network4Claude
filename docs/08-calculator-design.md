@@ -955,7 +955,7 @@ Risk-adjusted model power = 1.00 × 0.55 = $0.55 / ¥1
 
 - 将当前前端原型（`index.html`，后续可拆详细计算页）完整接上 `docs/08` 的分项公式与渠道数据。
 - 首页雷达图改为“按轴单独分级的 1-6 级语义模型”；设计语义以 `Design.md` 第 12.1 节为准，前端消费的机器可读分级表以 `data/radar-axis-levels.json` 为准，不再使用 `value/max` 或 `sqrt(value/max)` 这类全局压缩。
-- 2026-05-12 起，入口页 persona 默认总量阶梯上调为 `250M / 500M / 1B / 2B / 20B / 100B`，活跃数值配置以 `data/personas.json` 与 `data/radar-axis-levels.json` 为准。
+- 2026-05-12 起，入口页 persona 默认交互总量阶梯上调为 `250M / 500M / 1B / 2B / 20B / 100B`；这里的“总量”专指 `input + output`，缓存只作为独立强度维度展示。活跃数值配置以 `data/personas.json` 与 `data/radar-axis-levels.json` 为准。
 - 添加中转站动态价格库。
 - 二阶段支持本地 usage/cache 文件导入，参考 vibeusage 一类开源项目，把本地缓存、usage 日志、模型分布解析成统一 usage rows 后一次性混合计价。
 - 添加自动一致性检查脚本。

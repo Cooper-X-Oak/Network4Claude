@@ -368,16 +368,6 @@
       flex: 0 0 auto;
     }
 
-    .section-prompt {
-      margin: 0 0 12px;
-      font-family: var(--font-serif);
-      font-size: 12px;
-      font-weight: 500;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--color-ink-3);
-    }
-
     .persona-row {
       display: grid;
       grid-template-columns: repeat(6, minmax(0, 1fr));
@@ -571,7 +561,6 @@
       </div>
 
       <section class="personas-section" aria-label="使用画像">
-      <p class="section-prompt">你看起来像</p>
       <div class="persona-row" id="personaRow" role="radiogroup" aria-label="使用画像"></div>
       </section>
     </main>
@@ -655,6 +644,7 @@
         sums.cacheRead  += (u.cache_read || 0) + (u.cached_input || 0);
         sums.cacheWrite += (u.cache_write_5m || 0) + (u.cache_write_1h || 0);
       }
+      sums.interactionTotal = sums.input + sums.output;
       return sums;
     }
 
@@ -672,15 +662,31 @@
     function computeRadarValues(persona) {
       const axes = getRadarAxes();
       const me = aggregateUsage(persona);
-      const total = me.input + me.output + me.cacheRead + me.cacheWrite;
+      const interactionTotal = me.interactionTotal || 0;
       if (!axes.length) return [];
-      if (total <= 0) return Array.from({ length: axes.length }, () => 0);
+      if (interactionTotal <= 0) return Array.from({ length: axes.length }, () => 0);
 
       const levelMax = getRadarLevelMax();
       return axes.map(axis => {
-        const axisValue = axis.aggregateField === "total" ? total : (me[axis.aggregateField] || 0);
+        const axisValue = me[axis.aggregateField] || 0;
         return levelFromAxis(axisValue, axis) / levelMax;
       });
+    }
+
+    function formatUsageSummary(usage) {
+      const interactionTotal = usage.interactionTotal || 0;
+      const cacheTotal = usage.cacheRead + usage.cacheWrite;
+      if (interactionTotal <= 0) {
+        return "无固定用量画像——这一类用户按项目波动。";
+      }
+
+      let summary = `交互总量 ${fmtTokens(interactionTotal)} token：input ${fmtTokens(usage.input)} · output ${fmtTokens(usage.output)}。`;
+      if (cacheTotal > 0) {
+        summary += ` 缓存强度：读 ${fmtTokens(usage.cacheRead)}`;
+        if (usage.cacheWrite > 0) summary += ` · 写 ${fmtTokens(usage.cacheWrite)}`;
+        summary += "。";
+      }
+      return summary;
     }
 
     function computeApiCostUsd(persona, pricing) {
@@ -932,11 +938,7 @@
       morphRadarTo(radarValues);
 
       const u = aggregateUsage(persona);
-      const total = u.input + u.output + u.cacheRead + u.cacheWrite;
-      els.radarTotals.textContent = total <= 0
-        ? "无固定用量画像——这一类用户按项目波动。"
-        : `月度合计 ${fmtTokens(total)} token：input ${fmtTokens(u.input)} · output ${fmtTokens(u.output)} · cache 读 ${fmtTokens(u.cacheRead)}` +
-          (u.cacheWrite > 0 ? ` · cache 写 ${fmtTokens(u.cacheWrite)}` : "") + "。";
+      els.radarTotals.textContent = formatUsageSummary(u);
 
       const { apiUsd, tiers } = computeTiers(persona, state.pricing);
       const sorted = [...tiers].sort((a, b) => a.cny - b.cny);
@@ -965,11 +967,7 @@
       els.profileName.textContent = persona.name;
       els.profileTagline.textContent = persona.tagline || "";
       const u = aggregateUsage(persona);
-      const total = u.input + u.output + u.cacheRead + u.cacheWrite;
-      els.radarTotals.textContent = total <= 0
-        ? "无固定用量画像——这一类用户按项目波动。"
-        : `月度合计 ${fmtTokens(total)} token：input ${fmtTokens(u.input)} · output ${fmtTokens(u.output)} · cache 读 ${fmtTokens(u.cacheRead)}` +
-          (u.cacheWrite > 0 ? ` · cache 写 ${fmtTokens(u.cacheWrite)}` : "") + "。";
+      els.radarTotals.textContent = formatUsageSummary(u);
       const { apiUsd, tiers } = computeTiers(persona, state.pricing);
       const sorted = [...tiers].sort((a, b) => a.cny - b.cny);
 
