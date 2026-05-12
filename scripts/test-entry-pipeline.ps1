@@ -137,7 +137,7 @@ function Test-Persona {
   ) "$Id keeps the radar and price section above the persona cards"
 
   if ($Id -eq "api_integration") {
-    Assert-True ($state.priceAmountValues[-1] -eq 0) "api_integration shows zero monthly baseline cost in the current implementation"
+    Assert-True ($state.priceAmountValues[-1] -gt 0) "api_integration now shows a positive default monthly cost profile"
   }
 }
 
