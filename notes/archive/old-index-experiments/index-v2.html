@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>找到你的 AI 成本位置 - Network4Claude</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg-warm: #f7f3ea;
+      --paper: #fffcf5;
+      --ink: #1a1f2e;
+      --ink-muted: #64748b;
+      --teal: #0f766e;
+      --teal-soft: #ecfdf3;
+      --blue: #2563eb;
+      --purple: #8b5cf6;
+      --amber: #f59e0b;
+      --red: #ef4444;
+      --border: rgba(0, 0, 0, 0.08);
+      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+      --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.12);
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: var(--bg-warm);
+      color: var(--ink);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 40px 32px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 24px;
+    }
+
+    .hero-text {
+      flex: 1;
+    }
+
+    h1 {
+      font-size: clamp(42px, 5vw, 64px);
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      margin-bottom: 16px;
+    }
+
+    .subtitle {
+      font-size: 18px;
+      color: var(--ink-muted);
+      max-width: 560px;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 12px;
+      padding-top: 8px;
+    }
+
+    .btn {
+      padding: 12px 24px;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s;
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn-secondary {
+      background: white;
+      color: var(--ink);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      background: var(--paper);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .btn-primary {
+      background: var(--teal);
+      color: white;
+      border: 1px solid var(--teal);
+    }
+
+    .btn-primary:hover {
+      background: #115e59;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(15, 118, 110, 0.3);
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .chart-container {
+      background: var(--paper);
+      border-radius: 24px;
+      padding: 48px;
+      box-shadow: var(--shadow-lg);
+      border: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .chart-container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(15, 118, 110, 0.1), transparent);
+    }
+
+    .chart-wrapper {
+      position: relative;
+      width: 100%;
+      height: 520px;
+    }
+
+    #costChart {
+      width: 100%;
+      height: 100%;
+    }
+
+    .slider-section {
+      margin-top: 32px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+    }
+
+    .slider-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 16px;
+    }
+
+    .slider-label-main {
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    .slider-label-hint {
+      font-size: 14px;
+      color: var(--ink-muted);
+    }
+
+    input[type="range"] {
+      width: 100%;
+      height: 8px;
+      border-radius: 4px;
+      background: linear-gradient(90deg, #fee2e2, #fef3c7, #d1fae5, #dbeafe);
+      outline: none;
+      -webkit-appearance: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--teal);
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(15, 118, 110, 0.4);
+      transition: all 0.2s;
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+      box-shadow: 0 4px 12px rgba(15, 118, 110, 0.5);
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--teal);
+      cursor: pointer;
+      border: none;
+      box-shadow: 0 2px 8px rgba(15, 118, 110, 0.4);
+    }
+
+    .result-card {
+      position: absolute;
+      bottom: 48px;
+      right: 48px;
+      background: var(--teal-soft);
+      border: 2px solid var(--teal);
+      border-radius: 16px;
+      padding: 24px;
+      min-width: 280px;
+      box-shadow: 0 8px 24px rgba(15, 118, 110, 0.15);
+    }
+
+    .result-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--teal);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 8px;
+    }
+
+    .result-name {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .result-price {
+      font-size: 36px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      margin-bottom: 8px;
+    }
+
+    .result-rate {
+      font-size: 14px;
+      color: var(--ink-muted);
+    }
+
+    .quick-scenarios {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .scenario-chip {
+      padding: 10px 20px;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .scenario-chip:hover {
+      background: var(--teal-soft);
+      border-color: var(--teal);
+      transform: translateY(-2px);
+    }
+
+    @media (max-width: 1024px) {
+      .container {
+        padding: 24px 20px;
+      }
+
+      header {
+        flex-direction: column;
+      }
+
+      .chart-container {
+        padding: 32px 24px;
+      }
+
+      .result-card {
+        position: static;
+        margin-top: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="hero-text">
+        <h1>找到你的 AI 成本位置</h1>
+        <p class="subtitle">拖动滑块，一眼看清官方订阅、API 和中转站的价格差异</p>
+      </div>
+      <div class="header-actions">
+        <a href="calculator.html" class="btn btn-secondary">详细计算器</a>
+        <a href="calculator.html?scenario=custom" class="btn btn-primary">开始测算</a>
+      </div>
+    </header>
+
+    <main>
+      <div class="chart-container">
+        <div class="chart-wrapper">
+          <canvas id="costChart"></canvas>
+        </div>
+
+        <div class="result-card" id="resultCard">
+          <div class="result-label">当前推荐</div>
+          <div class="result-name" id="resultName">官方 Pro</div>
+          <div class="result-price" id="resultPrice">¥169/月</div>
+          <div class="result-rate" id="resultRate">7.00 元 / $1</div>
+        </div>
+
+        <div class="slider-section">
+          <div class="slider-label">
+            <span class="slider-label-main" id="usageLabel">中度使用</span>
+            <span class="slider-label-hint" id="usageHint">每天约 20 次对话</span>
+          </div>
+          <input type="range" id="usageSlider" min="0" max="100" value="40" />
+        </div>
+      </div>
+
+      <div class="quick-scenarios">
+        <button class="scenario-chip" data-usage="50">🌱 偶尔用 - 每周几次</button>
+        <button class="scenario-chip" data-usage="200">⚡ 每天用 - 日常办公</button>
+        <button class="scenario-chip" data-usage="500">🔥 重度用 - 全天在线</button>
+        <button class="scenario-chip" data-usage="2124">🚀 Max 5x 容量</button>
+        <button class="scenario-chip" data-usage="8495">🎯 Max 20x 容量</button>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('costChart');
+    const ctx = canvas.getContext('2d');
+    const slider = document.getElementById('usageSlider');
+    const usageLabel = document.getElementById('usageLabel');
+    const usageHint = document.getElementById('usageHint');
+    const resultName = document.getElementById('resultName');
+    const resultPrice = document.getElementById('resultPrice');
+    const resultRate = document.getElementById('resultRate');
+
+    // 数据配置
+    const channels = [
+      { name: '黑卡/漏洞', cnyPerUsd: 1.5, color: '#ef4444', type: 'linear' },
+      { name: '号池分发', cnyPerUsd: 2.5, color: '#f97316', type: 'linear' },
+      { name: '正规中转', cnyPerUsd: 5, color: '#ca8a04', type: 'linear' },
+      { name: '官方 API', cnyPerUsd: 7, color: '#2563eb', type: 'linear' },
+      { name: '官方 Pro', monthlyCost: 169, capacity: 425, color: '#10b981', type: 'subscription' },
+      { name: '官方 Max 5x', monthlyCost: 729, capacity: 2124, color: '#3b82f6', type: 'subscription' },
+      { name: '官方 Max 20x', monthlyCost: 1429, capacity: 8495, color: '#8b5cf6', type: 'subscription' }
+    ];
+
+    const priceBands = [
+      { name: '黑卡/漏洞', min: 0, max: 2, color: 'rgba(254, 226, 226, 0.4)' },
+      { name: '自建/号池', min: 2, max: 4, color: 'rgba(254, 243, 199, 0.4)' },
+      { name: '中转站', min: 4, max: 6, color: 'rgba(254, 249, 195, 0.4)' },
+      { name: '接近官方', min: 6, max: 7, color: 'rgba(209, 250, 229, 0.4)' },
+      { name: '官方基准', min: 7, max: 7, color: 'rgba(219, 234, 254, 0.4)' }
+    ];
+
+    let currentUsage = 200;
+    const maxUsage = 9000;
+    const maxCost = 2200;
+
+    function setupCanvas() {
+      const dpr = window.devicePixelRatio || 1;
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      ctx.scale(dpr, dpr);
+      canvas.style.width = rect.width + 'px';
+      canvas.style.height = rect.height + 'px';
+    }
+
+    function drawChart() {
+      const width = canvas.clientWidth;
+      const height = canvas.clientHeight;
+      const padding = { left: 80, right: 60, top: 40, bottom: 80 };
+      const chartWidth = width - padding.left - padding.right;
+      const chartHeight = height - padding.top - padding.bottom;
+
+      ctx.clearRect(0, 0, width, height);
+
+      // 绘制价格带背景
+      priceBands.forEach(band => {
+        const yTop = padding.top + chartHeight * (1 - band.max / 10);
+        const yBottom = padding.top + chartHeight * (1 - band.min / 10);
+        ctx.fillStyle = band.color;
+        ctx.fillRect(padding.left, yTop, chartWidth, yBottom - yTop);
+      });
+
+      // 绘制网格
+      ctx.strokeStyle = 'rgba(0, 0, 0, 0.06)';
+      ctx.lineWidth = 1;
+      [0, 500, 1000, 1500, 2000].forEach(cost => {
+        const y = padding.top + chartHeight * (1 - cost / maxCost);
+        ctx.beginPath();
+        ctx.moveTo(padding.left, y);
+        ctx.lineTo(width - padding.right, y);
+        ctx.stroke();
+      });
+
+      // 绘制坐标轴
+      ctx.strokeStyle = '#1a1f2e';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(padding.left, padding.top);
+      ctx.lineTo(padding.left, height - padding.bottom);
+      ctx.lineTo(width - padding.right, height - padding.bottom);
+      ctx.stroke();
+
+      // Y轴标签（成本）
+      ctx.fillStyle = '#1a1f2e';
+      ctx.font = '600 13px -apple-system, sans-serif';
+      ctx.textAlign = 'right';
+      ctx.textBaseline = 'middle';
+      [0, 500, 1000, 1500, 2000].forEach(cost => {
+        const y = padding.top + chartHeight * (1 - cost / maxCost);
+        ctx.fillText(`¥${cost}`, padding.left - 12, y);
+      });
+
+      // X轴标签（用量）
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+      const xTicks = [
+        { usage: 50, label: '轻度' },
+        { usage: 200, label: '中度' },
+        { usage: 500, label: '重度' },
+        { usage: 2124, label: '极重' },
+        { usage: 8495, label: 'API' }
+      ];
+      xTicks.forEach(tick => {
+        const x = padding.left + chartWidth * Math.log10(tick.usage + 1) / Math.log10(maxUsage + 1);
+        ctx.fillText(tick.label, x, height - padding.bottom + 12);
+      });
+
+      // 绘制曲线
+      channels.forEach(channel => {
+        if (channel.type === 'linear') {
+          drawLinearCurve(channel, padding, chartWidth, chartHeight);
+        } else {
+          drawSubscriptionCurve(channel, padding, chartWidth, chartHeight);
+        }
+      });
+
+      // 绘制当前选择的垂直线
+      const currentX = padding.left + chartWidth * Math.log10(currentUsage + 1) / Math.log10(maxUsage + 1);
+      ctx.strokeStyle = 'rgba(15, 118, 110, 0.5)';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([8, 4]);
+      ctx.beginPath();
+      ctx.moveTo(currentX, padding.top);
+      ctx.lineTo(currentX, height - padding.bottom);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // 绘制当前点
+      const bestChannel = findBestChannel(currentUsage);
+      const bestCost = calculateCost(bestChannel, currentUsage);
+      const bestY = padding.top + chartHeight * (1 - bestCost / maxCost);
+      ctx.fillStyle = '#0f766e';
+      ctx.beginPath();
+      ctx.arc(currentX, bestY, 8, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = 'white';
+      ctx.lineWidth = 3;
+      ctx.stroke();
+    }
+
+    function drawLinearCurve(channel, padding, chartWidth, chartHeight) {
+      const width = canvas.clientWidth;
+      const height = canvas.clientHeight;
+
+      ctx.strokeStyle = channel.color;
+      ctx.lineWidth = channel.name === '官方 API' ? 3 : 2;
+      ctx.beginPath();
+
+      for (let usage = 10; usage <= maxUsage; usage *= 1.15) {
+        const x = padding.left + chartWidth * Math.log10(usage + 1) / Math.log10(maxUsage + 1);
+        const cost = Math.min(maxCost, usage * channel.cnyPerUsd);
+        const y = padding.top + chartHeight * (1 - cost / maxCost);
+
+        if (usage === 10) {
+          ctx.moveTo(x, y);
+        } else {
+          ctx.lineTo(x, y);
+        }
+      }
+      ctx.stroke();
+
+      // 标签
+      const labelX = padding.left + chartWidth * 0.25;
+      const labelCost = 220 * channel.cnyPerUsd;
+      const labelY = padding.top + chartHeight * (1 - labelCost / maxCost) - 10;
+      ctx.fillStyle = channel.color;
+      ctx.font = '700 13px -apple-system, sans-serif';
+      ctx.textAlign = 'left';
+      ctx.fillText(channel.name, labelX, labelY);
+    }
+
+    function drawSubscriptionCurve(channel, padding, chartWidth, chartHeight) {
+      const width = canvas.clientWidth;
+      const height = canvas.clientHeight;
+
+      const x1 = padding.left + chartWidth * Math.log10(10) / Math.log10(maxUsage + 1);
+      const x2 = padding.left + chartWidth * Math.log10(channel.capacity + 1) / Math.log10(maxUsage + 1);
+      const y = padding.top + chartHeight * (1 - channel.monthlyCost / maxCost);
+
+      ctx.strokeStyle = channel.color;
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.moveTo(x1, y);
+      ctx.lineTo(x2, y);
+      ctx.stroke();
+
+      // 标签
+      ctx.fillStyle = channel.color;
+      ctx.font = '700 13px -apple-system, sans-serif';
+      ctx.textAlign = 'right';
+      ctx.fillText(channel.name, x2 - 10, y - 10);
+    }
+
+    function calculateCost(channel, usage) {
+      if (channel.type === 'linear') {
+        return usage * channel.cnyPerUsd;
+      } else {
+        return channel.monthlyCost;
+      }
+    }
+
+    function findBestChannel(usage) {
+      let best = channels[0];
+      let bestCost = Infinity;
+
+      channels.forEach(channel => {
+        if (channel.type === 'subscription' && usage > channel.capacity) {
+          return; // 超出容量的订阅不推荐
+        }
+
+        const cost = calculateCost(channel, usage);
+        const riskFactor = channel.type === 'linear' && channel.cnyPerUsd < 4 ? 0.5 : 1;
+
+        if (riskFactor >= 0.7 && cost < bestCost) {
+          best = channel;
+          bestCost = cost;
+        }
+      });
+
+      return best;
+    }
+
+    function updateResult() {
+      const best = findBestChannel(currentUsage);
+      const cost = calculateCost(best, currentUsage);
+      const effectiveRate = best.type === 'subscription'
+        ? (best.monthlyCost / currentUsage).toFixed(2)
+        : best.cnyPerUsd.toFixed(2);
+
+      resultName.textContent = best.name;
+      resultPrice.textContent = `¥${Math.round(cost)}/月`;
+      resultRate.textContent = `${effectiveRate} 元 / $1`;
+
+      // 更新用量标签
+      if (currentUsage < 120) {
+        usageLabel.textContent = '轻度使用';
+        usageHint.textContent = '每周几次，学习探索';
+      } else if (currentUsage < 425) {
+        usageLabel.textContent = '中度使用';
+        usageHint.textContent = '每天约 20 次对话';
+      } else if (currentUsage < 2124) {
+        usageLabel.textContent = '重度使用';
+        usageHint.textContent = '全天在线，长上下文';
+      } else if (currentUsage < 8495) {
+        usageLabel.textContent = '极重度使用';
+        usageHint.textContent = '代理编程或多人共享';
+      } else {
+        usageLabel.textContent = 'API 集成';
+        usageHint.textContent = '大规模按量使用';
+      }
+    }
+
+    function sliderToUsage(value) {
+      const min = Math.log10(10);
+      const max = Math.log10(maxUsage);
+      return Math.round(10 ** (min + (value / 100) * (max - min)));
+    }
+
+    function usageToSlider(usage) {
+      const min = Math.log10(10);
+      const max = Math.log10(maxUsage);
+      return Math.round(((Math.log10(Math.max(10, usage)) - min) / (max - min)) * 100);
+    }
+
+    // 事件监听
+    slider.addEventListener('input', (e) => {
+      currentUsage = sliderToUsage(Number(e.target.value));
+      updateResult();
+      drawChart();
+    });
+
+    document.querySelectorAll('.scenario-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        currentUsage = Number(chip.dataset.usage);
+        slider.value = usageToSlider(currentUsage);
+        updateResult();
+        drawChart();
+      });
+    });
+
+    window.addEventListener('resize', () => {
+      setupCanvas();
+      drawChart();
+    });
+
+    // 初始化
+    setupCanvas();
+    currentUsage = sliderToUsage(Number(slider.value));
+    updateResult();
+    drawChart();
+  </script>
+</body>
+</html>

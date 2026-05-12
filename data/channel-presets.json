@@ -1,0 +1,100 @@
+{
+  "updated_at": "2026-05-09",
+  "unit": "CNY per 1 USD API-equivalent purchasing power",
+  "notes": [
+    "Non-official channel presets are planning assumptions for risk and sustainability checks.",
+    "Official subscription capacities are derived from data/plan-baselines.json, not duplicated here.",
+    "Official API direct purchase baseline is 7 CNY per 1 USD API-equivalent purchasing power when USD/CNY is 7."
+  ],
+  "price_bands": [
+    {
+      "id": "black_or_exploit",
+      "name": "黑卡/漏洞",
+      "min_cny_per_usd": 0,
+      "max_cny_per_usd": 2,
+      "color": "#fee2e2",
+      "risk_label": "高风险"
+    },
+    {
+      "id": "self_hosted_or_pool",
+      "name": "自建/号池",
+      "min_cny_per_usd": 2,
+      "max_cny_per_usd": 4,
+      "color": "#fef3c7",
+      "risk_label": "不稳定"
+    },
+    {
+      "id": "regular_proxy",
+      "name": "中转站",
+      "min_cny_per_usd": 4,
+      "max_cny_per_usd": 6,
+      "color": "#fef9c3",
+      "risk_label": "中风险"
+    },
+    {
+      "id": "near_official",
+      "name": "接近官方",
+      "min_cny_per_usd": 6,
+      "max_cny_per_usd": 7,
+      "color": "#d1fae5",
+      "risk_label": "较稳"
+    },
+    {
+      "id": "official_baseline",
+      "name": "官方基准",
+      "min_cny_per_usd": 7,
+      "max_cny_per_usd": 7,
+      "color": "#dbeafe",
+      "risk_label": "基准"
+    },
+    {
+      "id": "official_markup",
+      "name": "正规 API 加价",
+      "min_cny_per_usd": 7,
+      "max_cny_per_usd": 10,
+      "color": "#e9d5ff",
+      "risk_label": "加价"
+    }
+  ],
+  "channels": [
+    {
+      "id": "black_card",
+      "name": "黑卡/漏洞",
+      "type": "linear",
+      "cny_per_usd": 1.5,
+      "risk_factor": 0.2,
+      "monthly_cost_range_cny": [20, 50],
+      "color": "#ef4444",
+      "status": "高风险"
+    },
+    {
+      "id": "pool_sharing",
+      "name": "号池分发",
+      "type": "linear",
+      "cny_per_usd": 2.5,
+      "risk_factor": 0.4,
+      "monthly_cost_range_cny": [50, 120],
+      "color": "#f97316",
+      "status": "易断流"
+    },
+    {
+      "id": "regular_proxy",
+      "name": "正规中转",
+      "type": "linear",
+      "cny_per_usd": 5,
+      "risk_factor": 0.7,
+      "monthly_cost_range_cny": [120, 200],
+      "color": "#ca8a04",
+      "status": "中风险"
+    },
+    {
+      "id": "official_api",
+      "name": "官方 API",
+      "type": "linear",
+      "cny_per_usd": 7,
+      "risk_factor": 1,
+      "color": "#2563eb",
+      "status": "官方基准"
+    }
+  ]
+}

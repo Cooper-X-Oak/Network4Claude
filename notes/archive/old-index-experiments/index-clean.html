@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>找到你的 AI 成本位置</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    .gradient-bg {
+      background: linear-gradient(135deg, #f5f7fa 0%, #fef9f3 100%);
+    }
+
+    .person-icon {
+      transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+
+    .person-arm {
+      transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      transform-origin: center;
+    }
+
+    .scenario-btn {
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 0;
+    }
+
+    .scenario-btn:hover .person-icon {
+      transform: scale(1.15);
+    }
+
+    .scenario-btn.active .person-icon {
+      transform: scale(1.4);
+    }
+
+    .scenario-btn.active svg {
+      color: #111827 !important;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+    }
+
+    .scenario-btn.active span {
+      color: #111827 !important;
+      font-weight: 800;
+    }
+
+    .scenario-btn.active .person-arm-left {
+      transform: translateY(-12px) translateX(-4px);
+    }
+
+    .scenario-btn.active .person-arm-right {
+      transform: translateY(-12px) translateX(4px);
+    }
+
+    .pixel-person rect {
+      shape-rendering: crispEdges;
+    }
+  </style>
+</head>
+<body class="gradient-bg antialiased">
+
+  <main class="h-screen flex flex-col overflow-hidden">
+
+    <header class="px-8 py-4 flex justify-between items-center flex-shrink-0">
+      <div class="text-sm font-semibold text-gray-900">Network4Claude</div>
+      <a href="calculator.html" class="text-sm font-medium text-gray-600 hover:text-gray-900 transition">
+        详细计算器 →
+      </a>
+    </header>
+
+    <div class="flex-1 flex flex-col justify-center px-8 max-w-7xl mx-auto w-full min-h-0">
+
+      <div class="mb-8">
+        <h1 class="text-5xl md:text-6xl font-bold text-gray-900 leading-tight mb-4">
+          你的 AI，花对钱了吗？
+        </h1>
+        <p class="text-lg text-gray-600 max-w-2xl">
+          点击像素小人，看看不同用量下谁最划算
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+
+        <div class="lg:col-span-2">
+          <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+            <canvas id="chart" class="w-full" style="height: 240px;"></canvas>
+          </div>
+
+          <div class="mt-4">
+            <div class="flex justify-between items-baseline mb-3">
+              <span class="text-base font-semibold text-gray-900" id="usageLabel">中度使用</span>
+              <span class="text-sm text-gray-500" id="usageHint">每天约 20 次对话</span>
+            </div>
+
+            <div class="flex justify-center items-end gap-8">
+              <button class="scenario-btn flex flex-col items-center gap-2 transition-all" data-usage="50">
+                <svg class="person-icon pixel-person w-10 h-14 text-gray-400" viewBox="0 0 32 48" fill="currentColor">
+                  <rect x="10" y="4" width="4" height="4"/>
+                  <rect x="14" y="4" width="4" height="4"/>
+                  <rect x="18" y="4" width="4" height="4"/>
+                  <rect x="10" y="8" width="4" height="4"/>
+                  <rect x="14" y="8" width="4" height="4"/>
+                  <rect x="18" y="8" width="4" height="4"/>
+                  <rect x="10" y="12" width="4" height="4"/>
+                  <rect x="14" y="12" width="4" height="4"/>
+                  <rect x="18" y="12" width="4" height="4"/>
+                  <rect x="10" y="16" width="4" height="4"/>
+                  <rect x="14" y="16" width="4" height="4"/>
+                  <rect x="18" y="16" width="4" height="4"/>
+                  <rect x="10" y="20" width="4" height="4"/>
+                  <rect x="14" y="20" width="4" height="4"/>
+                  <rect x="18" y="20" width="4" height="4"/>
+                  <g class="person-arm person-arm-left">
+                    <rect x="6" y="16" width="4" height="4"/>
+                    <rect x="6" y="20" width="4" height="4"/>
+                  </g>
+                  <g class="person-arm person-arm-right">
+                    <rect x="22" y="16" width="4" height="4"/>
+                    <rect x="22" y="20" width="4" height="4"/>
+                  </g>
+                  <rect x="10" y="24" width="4" height="4"/>
+                  <rect x="18" y="24" width="4" height="4"/>
+                  <rect x="10" y="28" width="4" height="4"/>
+                  <rect x="18" y="28" width="4" height="4"/>
+                  <rect x="8" y="32" width="4" height="4"/>
+                  <rect x="20" y="32" width="4" height="4"/>
+                </svg>
+                <span class="text-xs font-semibold text-gray-400">轻度</span>
+              </button>
+
+              <button class="scenario-btn active flex flex-col items-center gap-2 transition-all" data-usage="200">
+                <svg class="person-icon pixel-person w-12 h-16 text-gray-900" viewBox="0 0 32 48" fill="currentColor">
+                  <rect x="10" y="4" width="4" height="4"/>
+                  <rect x="14" y="4" width="4" height="4"/>
+                  <rect x="18" y="4" width="4" height="4"/>
+                  <rect x="10" y="8" width="4" height="4"/>
+                  <rect x="14" y="8" width="4" height="4"/>
+                  <rect x="18" y="8" width="4" height="4"/>
+                  <rect x="10" y="12" width="4" height="4"/>
+                  <rect x="14" y="12" width="4" height="4"/>
+                  <rect x="18" y="12" width="4" height="4"/>
+                  <rect x="10" y="16" width="4" height="4"/>
+                  <rect x="14" y="16" width="4" height="4"/>
+                  <rect x="18" y="16" width="4" height="4"/>
+                  <rect x="10" y="20" width="4" height="4"/>
+                  <rect x="14" y="20" width="4" height="4"/>
+                  <rect x="18" y="20" width="4" height="4"/>
+                  <g class="person-arm person-arm-left">
+                    <rect x="6" y="16" width="4" height="4"/>
+                    <rect x="6" y="20" width="4" height="4"/>
+                  </g>
+                  <g class="person-arm person-arm-right">
+                    <rect x="22" y="16" width="4" height="4"/>
+                    <rect x="22" y="20" width="4" height="4"/>
+                  </g>
+                  <rect x="10" y="24" width="4" height="4"/>
+                  <rect x="18" y="24" width="4" height="4"/>
+                  <rect x="10" y="28" width="4" height="4"/>
+                  <rect x="18" y="28" width="4" height="4"/>
+                  <rect x="8" y="32" width="4" height="4"/>
+                  <rect x="20" y="32" width="4" height="4"/>
+                </svg>
+                <span class="text-xs font-semibold text-gray-900">中度</span>
+              </button>
+
+              <button class="scenario-btn flex flex-col items-center gap-2 transition-all" data-usage="500">
+                <svg class="person-icon pixel-person w-10 h-14 text-gray-400" viewBox="0 0 32 48" fill="currentColor">
+                  <rect x="10" y="4" width="4" height="4"/>
+                  <rect x="14" y="4" width="4" height="4"/>
+                  <rect x="18" y="4" width="4" height="4"/>
+                  <rect x="10" y="8" width="4" height="4"/>
+                  <rect x="14" y="8" width="4" height="4"/>
+                  <rect x="18" y="8" width="4" height="4"/>
+                  <rect x="10" y="12" width="4" height="4"/>
+                  <rect x="14" y="12" width="4" height="4"/>
+                  <rect x="18" y="12" width="4" height="4"/>
+                  <rect x="10" y="16" width="4" height="4"/>
+                  <rect x="14" y="16" width="4" height="4"/>
+                  <rect x="18" y="16" width="4" height="4"/>
+                  <rect x="10" y="20" width="4" height="4"/>
+                  <rect x="14" y="20" width="4" height="4"/>
+                  <rect x="18" y="20" width="4" height="4"/>
+                  <g class="person-arm person-arm-left">
+                    <rect x="6" y="16" width="4" height="4"/>
+                    <rect x="6" y="20" width="4" height="4"/>
+                  </g>
+                  <g class="person-arm person-arm-right">
+                    <rect x="22" y="16" width="4" height="4"/>
+                    <rect x="22" y="20" width="4" height="4"/>
+                  </g>
+                  <rect x="10" y="24" width="4" height="4"/>
+                  <rect x="18" y="24" width="4" height="4"/>
+                  <rect x="10" y="28" width="4" height="4"/>
+                  <rect x="18" y="28" width="4" height="4"/>
+                  <rect x="8" y="32" width="4" height="4"/>
+                  <rect x="20" y="32" width="4" height="4"/>
+                </svg>
+                <span class="text-xs font-semibold text-gray-400">重度</span>
+              </button>
+
+              <button class="scenario-btn flex flex-col items-center gap-2 transition-all" data-usage="2500">
+                <svg class="person-icon pixel-person w-10 h-14 text-gray-400" viewBox="0 0 32 48" fill="currentColor">
+                  <rect x="10" y="4" width="4" height="4"/>
+                  <rect x="14" y="4" width="4" height="4"/>
+                  <rect x="18" y="4" width="4" height="4"/>
+                  <rect x="10" y="8" width="4" height="4"/>
+                  <rect x="14" y="8" width="4" height="4"/>
+                  <rect x="18" y="8" width="4" height="4"/>
+                  <rect x="10" y="12" width="4" height="4"/>
+                  <rect x="14" y="12" width="4" height="4"/>
+                  <rect x="18" y="12" width="4" height="4"/>
+                  <rect x="10" y="16" width="4" height="4"/>
+                  <rect x="14" y="16" width="4" height="4"/>
+                  <rect x="18" y="16" width="4" height="4"/>
+                  <rect x="10" y="20" width="4" height="4"/>
+                  <rect x="14" y="20" width="4" height="4"/>
+                  <rect x="18" y="20" width="4" height="4"/>
+                  <g class="person-arm person-arm-left">
+                    <rect x="6" y="16" width="4" height="4"/>
+                    <rect x="6" y="20" width="4" height="4"/>
+                  </g>
+                  <g class="person-arm person-arm-right">
+                    <rect x="22" y="16" width="4" height="4"/>
+                    <rect x="22" y="20" width="4" height="4"/>
+                  </g>
+                  <rect x="10" y="24" width="4" height="4"/>
+                  <rect x="18" y="24" width="4" height="4"/>
+                  <rect x="10" y="28" width="4" height="4"/>
+                  <rect x="18" y="28" width="4" height="4"/>
+                  <rect x="8" y="32" width="4" height="4"/>
+                  <rect x="20" y="32" width="4" height="4"/>
+                </svg>
+                <span class="text-xs font-semibold text-gray-400">极重</span>
+              </button>
+
+              <button class="scenario-btn flex-col items-center gap-2 transition-all hidden lg:flex" data-usage="9000">
+                <svg class="person-icon pixel-person w-10 h-14 text-gray-400" viewBox="0 0 32 48" fill="currentColor">
+                  <rect x="10" y="4" width="4" height="4"/>
+                  <rect x="14" y="4" width="4" height="4"/>
+                  <rect x="18" y="4" width="4" height="4"/>
+                  <rect x="10" y="8" width="4" height="4"/>
+                  <rect x="14" y="8" width="4" height="4"/>
+                  <rect x="18" y="8" width="4" height="4"/>
+                  <rect x="10" y="12" width="4" height="4"/>
+                  <rect x="14" y="12" width="4" height="4"/>
+                  <rect x="18" y="12" width="4" height="4"/>
+                  <rect x="10" y="16" width="4" height="4"/>
+                  <rect x="14" y="16" width="4" height="4"/>
+                  <rect x="18" y="16" width="4" height="4"/>
+                  <rect x="10" y="20" width="4" height="4"/>
+                  <rect x="14" y="20" width="4" height="4"/>
+                  <rect x="18" y="20" width="4" height="4"/>
+                  <g class="person-arm person-arm-left">
+                    <rect x="6" y="16" width="4" height="4"/>
+                    <rect x="6" y="20" width="4" height="4"/>
+                  </g>
+                  <g class="person-arm person-arm-right">
+                    <rect x="22" y="16" width="4" height="4"/>
+                    <rect x="22" y="20" width="4" height="4"/>
+                  </g>
+                  <rect x="10" y="24" width="4" height="4"/>
+                  <rect x="18" y="24" width="4" height="4"/>
+                  <rect x="10" y="28" width="4" height="4"/>
+                  <rect x="18" y="28" width="4" height="4"/>
+                  <rect x="8" y="32" width="4" height="4"/>
+                  <rect x="20" y="32" width="4" height="4"/>
+                </svg>
+                <span class="text-xs font-semibold text-gray-400">API</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-6 text-white shadow-xl">
+          <div class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3">当前推荐</div>
+          <div class="text-2xl font-bold mb-2" id="planName">官方 Pro</div>
+          <div class="text-4xl font-bold mb-3" id="planPrice">¥169<span class="text-xl text-gray-400">/月</span></div>
+          <div class="text-sm text-gray-400 mb-6" id="planRate">7.00 元 / $1 API 等值</div>
+          <button class="w-full bg-white text-gray-900 font-semibold py-2.5 px-6 rounded-xl hover:bg-gray-100 transition text-sm">
+            开始测算
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+
+    <footer class="px-8 py-3 text-center text-xs text-gray-500 flex-shrink-0">
+      数据更新：2026-05-09
+    </footer>
+
+  </main>
+
+  <script>
+    const canvas = document.getElementById('chart');
+    const ctx = canvas.getContext('2d');
+
+    const channels = [
+      { name: '黑卡', cnyPerUsd: 1.5, color: '#ef4444', risk: 0.2 },
+      { name: '号池', cnyPerUsd: 2.5, color: '#f97316', risk: 0.4 },
+      { name: '中转', cnyPerUsd: 5, color: '#eab308', risk: 0.7 },
+      { name: 'API', cnyPerUsd: 7, color: '#3b82f6', risk: 1 },
+      { name: 'Pro', cost: 169, capacity: 425, color: '#10b981', type: 'plan', risk: 1 },
+      { name: 'Max 5x', cost: 729, capacity: 2124, color: '#6366f1', type: 'plan', risk: 1 },
+      { name: 'Max 20x', cost: 1429, capacity: 8495, color: '#8b5cf6', type: 'plan', risk: 1 }
+    ];
+
+    let currentUsage = 200;
+    let bestChannel = null;
+    const maxUsage = 3000;
+
+    function getMaxCost() {
+      // 动态计算 maxCost：取最高成本的 1.2 倍
+      let highest = 0;
+      channels.forEach(ch => {
+        if (ch.type === 'plan') {
+          highest = Math.max(highest, ch.cost);
+        } else {
+          highest = Math.max(highest, maxUsage * ch.cnyPerUsd);
+        }
+      });
+      return Math.ceil(highest * 1.2 / 500) * 500; // 向上取整到 500 的倍数
+    }
+
+    function setupCanvas() {
+      const dpr = window.devicePixelRatio || 1;
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      ctx.scale(dpr, dpr);
+      canvas.style.width = rect.width + 'px';
+      canvas.style.height = rect.height + 'px';
+    }
+
+    function drawChart() {
+      const w = canvas.clientWidth;
+      const h = canvas.clientHeight;
+      const pad = { l: 60, r: 40, t: 20, b: 40 };
+      const cw = w - pad.l - pad.r;
+      const ch = h - pad.t - pad.b;
+      const maxCost = getMaxCost();
+
+      ctx.clearRect(0, 0, w, h);
+
+      // 背景网格
+      ctx.strokeStyle = '#f3f4f6';
+      ctx.lineWidth = 1;
+      for (let i = 0; i <= 4; i++) {
+        const y = pad.t + (ch / 4) * i;
+        ctx.beginPath();
+        ctx.moveTo(pad.l, y);
+        ctx.lineTo(w - pad.r, y);
+        ctx.stroke();
+      }
+
+      // Y轴标签
+      ctx.fillStyle = '#6b7280';
+      ctx.font = '600 11px Inter, sans-serif';
+      ctx.textAlign = 'right';
+      ctx.textBaseline = 'middle';
+      for (let i = 0; i <= 4; i++) {
+        const cost = maxCost - (maxCost / 4) * i;
+        const y = pad.t + (ch / 4) * i;
+        ctx.fillText(`¥${cost >= 1000 ? (cost/1000).toFixed(1) + 'k' : cost}`, pad.l - 10, y);
+      }
+
+      // X轴刻度
+      ctx.fillStyle = '#6b7280';
+      ctx.font = '600 10px Inter, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+      const xTicks = [
+        { usage: 50, label: '50' },
+        { usage: 200, label: '200' },
+        { usage: 500, label: '500' },
+        { usage: 1000, label: '1k' },
+        { usage: 2000, label: '2k' }
+      ];
+      xTicks.forEach(tick => {
+        const x = pad.l + cw * (tick.usage / maxUsage);
+        ctx.fillText(tick.label, x, h - pad.b + 8);
+      });
+
+      // 绘制曲线
+      channels.forEach(channel => {
+        const isBest = bestChannel && channel.name === bestChannel.name;
+        ctx.strokeStyle = channel.color;
+        ctx.lineWidth = isBest ? 5 : 1.5;
+        ctx.globalAlpha = isBest ? 1 : 0.25;
+        ctx.beginPath();
+
+        if (channel.type === 'plan') {
+          const x1 = pad.l;
+          const x2 = pad.l + cw * (channel.capacity / maxUsage);
+          const y = pad.t + ch * (1 - channel.cost / maxCost);
+          ctx.moveTo(x1, y);
+          ctx.lineTo(x2, y);
+
+          // 容量上限标记（只显示推荐方案的）
+          if (isBest) {
+            ctx.globalAlpha = 0.4;
+            ctx.setLineDash([4, 4]);
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(x2, pad.t);
+            ctx.lineTo(x2, h - pad.b);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            ctx.globalAlpha = 1;
+            ctx.lineWidth = 5;
+          }
+        } else {
+          for (let usage = 0; usage <= maxUsage; usage += 50) {
+            const x = pad.l + cw * (usage / maxUsage);
+            const cost = Math.min(maxCost, usage * channel.cnyPerUsd);
+            const y = pad.t + ch * (1 - cost / maxCost);
+            if (usage === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+          }
+        }
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+
+        // 只显示推荐方案的标签
+        if (isBest) {
+          ctx.fillStyle = channel.color;
+          ctx.font = '800 14px Inter, sans-serif';
+          ctx.textAlign = 'left';
+
+          if (channel.type === 'plan') {
+            // 订阅方案：标签在水平线的右端
+            const labelX = pad.l + cw * (channel.capacity / maxUsage) - 80;
+            const labelY = pad.t + ch * (1 - channel.cost / maxCost) - 10;
+            ctx.fillText(channel.name, labelX, labelY);
+          } else {
+            // API 方案：标签在曲线中间
+            const labelX = pad.l + cw * 0.3;
+            const labelCost = 300 * channel.cnyPerUsd;
+            const labelY = pad.t + ch * (1 - labelCost / maxCost) - 10;
+            ctx.fillText(channel.name, labelX, labelY);
+          }
+        }
+      });
+
+      // 当前位置线
+      const x = pad.l + cw * (currentUsage / maxUsage);
+      ctx.strokeStyle = '#111827';
+      ctx.lineWidth = 3;
+      ctx.setLineDash([6, 4]);
+      ctx.beginPath();
+      ctx.moveTo(x, pad.t);
+      ctx.lineTo(x, h - pad.b);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // 当前位置圆点
+      if (bestChannel) {
+        const bestCost = bestChannel.type === 'plan' ? bestChannel.cost : currentUsage * bestChannel.cnyPerUsd;
+        const y = pad.t + ch * (1 - bestCost / maxCost);
+        ctx.fillStyle = bestChannel.color;
+        ctx.beginPath();
+        ctx.arc(x, y, 8, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = 'white';
+        ctx.lineWidth = 4;
+        ctx.stroke();
+      }
+    }
+
+    function findBestChannel(usage) {
+      const safeChannels = channels.filter(ch => ch.risk >= 0.7);
+      let best = null;
+      let bestCost = Infinity;
+
+      safeChannels.forEach(ch => {
+        let cost;
+        let valid = true;
+
+        if (ch.type === 'plan') {
+          if (usage > ch.capacity) {
+            valid = false;
+          } else {
+            cost = ch.cost;
+          }
+        } else {
+          cost = usage * ch.cnyPerUsd;
+        }
+
+        if (valid && cost < bestCost) {
+          best = ch;
+          bestCost = cost;
+        }
+      });
+
+      return best;
+    }
+
+    function updateUI() {
+      bestChannel = findBestChannel(currentUsage);
+
+      if (currentUsage < 120) {
+        usageLabel.textContent = '轻度使用';
+        usageHint.textContent = '每周几次';
+      } else if (currentUsage < 425) {
+        usageLabel.textContent = '中度使用';
+        usageHint.textContent = '每天约 20 次对话';
+      } else if (currentUsage < 2124) {
+        usageLabel.textContent = '重度使用';
+        usageHint.textContent = '全天在线';
+      } else if (currentUsage < 8495) {
+        usageLabel.textContent = '极重度使用';
+        usageHint.textContent = '代理编程或多人共享';
+      } else {
+        usageLabel.textContent = 'API 集成';
+        usageHint.textContent = '大规模使用';
+      }
+
+      if (bestChannel) {
+        const cost = bestChannel.type === 'plan' ? bestChannel.cost : currentUsage * bestChannel.cnyPerUsd;
+        const rate = bestChannel.type === 'plan'
+          ? (bestChannel.cost / currentUsage).toFixed(2)
+          : bestChannel.cnyPerUsd.toFixed(2);
+
+        planName.textContent = bestChannel.name;
+        planPrice.innerHTML = `¥${Math.round(cost)}<span class="text-xl text-gray-400">/月</span>`;
+        planRate.textContent = `${rate} 元 / $1 API 等值`;
+      }
+
+      drawChart();
+    }
+
+    document.querySelectorAll('.scenario-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.scenario-btn').forEach(b => {
+          b.classList.remove('active');
+          b.querySelector('svg').classList.remove('text-gray-900');
+          b.querySelector('svg').classList.add('text-gray-400');
+          b.querySelector('.text-xs').classList.remove('text-gray-900');
+          b.querySelector('.text-xs').classList.add('text-gray-400');
+        });
+
+        btn.classList.add('active');
+        btn.querySelector('svg').classList.remove('text-gray-400');
+        btn.querySelector('svg').classList.add('text-gray-900');
+        btn.querySelector('.text-xs').classList.remove('text-gray-400');
+        btn.querySelector('.text-xs').classList.add('text-gray-900');
+
+        currentUsage = Number(btn.dataset.usage);
+        updateUI();
+      });
+    });
+
+    window.addEventListener('resize', () => {
+      setupCanvas();
+      drawChart();
+    });
+
+    setupCanvas();
+    updateUI();
+  </script>
+
+</body>
+</html>

@@ -21,10 +21,14 @@ Use these as the active sources of truth:
 
 - `data/pricing.json`: official API token prices by model and token type.
 - `data/plan-baselines.json`: official plan baselines, API-equivalent purchasing power profiles, and Codex/OpenAI credit baselines.
+- `data/personas.json`: active landing-page personas and their typical monthly usage profiles.
+- `data/channels.json`: active channel catalog, price-data status, and risk dimensions.
+- `data/channel-presets.json`: planning presets for price bands and curve visualizations.
 - `docs/08-calculator-design.md`: current product model, formulas, scenarios, channel risk model, and recommendation logic.
 - `docs/09-precision-calculation-engine.md`: calculation engine schema and deterministic usage-to-cost chain.
 - `scripts/cost-engine.mjs`: reusable precision calculation implementation.
-- `calculator.html`: current static prototype. It must not contradict `data/` or `docs/08-calculator-design.md`.
+- `index.html`: current active static entry page. It must not contradict `data/` or `docs/08-calculator-design.md`.
+- `assets/cards/_manifest.json`: active persona-card asset registry for the entry page.
 - `skills/doc-consistency-guardian/SKILL.md`: repository-specific documentation governance workflow.
 
 Do not add mutable prices, model limits, or formulas to other docs unless they are worked examples or explicitly point back to these truth sources.
@@ -40,12 +44,13 @@ Network4Claude/
 ├── scripts/          # Automation scripts
 ├── skills/           # Project-local Codex skills
 ├── assets/           # Images and evidence assets
-└── calculator.html   # Static calculator prototype
+├── Design.md         # Active entry-page design language
+└── index.html        # Active static entry page
 ```
 
 ## Documentation Governance
 
-When updating any cost, capacity, pricing, model, or recommendation content:
+When updating any cost, capacity, pricing, model, recommendation, channel, persona, or entry-page content:
 
 1. Read the truth sources first.
 2. Search the whole repo for stale terms and conflicting formulas.

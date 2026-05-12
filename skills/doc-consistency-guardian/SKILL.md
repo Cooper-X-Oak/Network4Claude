@@ -11,10 +11,14 @@ Use these files as the current source of truth:
 
 - `data/pricing.json`: official API token prices by model and token type.
 - `data/plan-baselines.json`: official plan baselines, API-equivalent purchasing power profiles, and subscription capacity assumptions.
+- `data/personas.json`: active landing-page persona definitions and typical monthly usage images.
+- `data/channels.json`: active channel catalog, price-data status, and risk dimensions.
+- `data/channel-presets.json`: planning presets for price bands and curve visuals.
 - `docs/08-calculator-design.md`: current product model, formulas, scenario model, channel risk model, and decision logic.
 - `docs/09-precision-calculation-engine.md`: usage row schema and deterministic calculation chain.
 - `scripts/cost-engine.mjs`: reusable precision calculation implementation.
-- `calculator.html`: current runnable calculator prototype; it must not contradict `data/` and `docs/08-calculator-design.md`.
+- `index.html`: current active static entry page; it must not contradict `data/`, `docs/08-calculator-design.md`, or the active persona/channel data files.
+- `assets/cards/_manifest.json`: active persona-card asset registry for the entry page.
 - `AGENTS.md`: repository operating rules and project-level collaboration constraints.
 
 When an external fact is time-sensitive, verify against official primary sources before updating the truth source. Pricing, plan limits, model names, and provider policies are time-sensitive.
@@ -29,12 +33,13 @@ For a consistency pass, scan:
 - `docs/`
 - `notes/`
 - `data/`
-- `calculator.html`
+- `index.html`
+- `assets/`
 - `configs/`
 - `scripts/`
 - `skills/`
 
-Also scan any generated examples or copied snippets when they embed formulas, prices, model names, plan limits, or recommendation logic.
+Also scan any generated examples or copied snippets when they embed formulas, prices, model names, plan limits, recommendation logic, persona definitions, channel labels, or entry-page asset references.
 
 ## Hard Rules
 

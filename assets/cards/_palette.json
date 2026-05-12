@@ -1,0 +1,47 @@
+{
+  "version": "1",
+  "updated_at": "2026-05-11",
+  "style_id": "modern_retro_pixel",
+  "style_reference": [
+    "Stardew Valley",
+    "Eastward",
+    "Sea of Stars"
+  ],
+  "principles": [
+    "温暖、低饱和、自然色系",
+    "单一光源左上 45 度",
+    "每张卡 ≤ 12 色",
+    "所有卡共享同一份 palette"
+  ],
+  "neutrals": {
+    "ink": "#2a2522",
+    "ink_soft": "#544741",
+    "paper": "#fbf6ea",
+    "paper_warm": "#f3e9d2",
+    "shadow_warm": "#9c8166"
+  },
+  "skin": {
+    "base": "#e8c9a3",
+    "shadow": "#b88c5e"
+  },
+  "accents": {
+    "teal": "#3d7a6e",
+    "teal_shadow": "#1f4a44",
+    "amber": "#d4894a",
+    "amber_shadow": "#9a5a26",
+    "rust": "#b04a2c",
+    "leaf": "#6b8a3a",
+    "sky": "#7aa4c4",
+    "steel_blue": "#4a6b85"
+  },
+  "card_background": {
+    "default": "#fbf6ea",
+    "hover": "#f3e9d2",
+    "active": "#ebe0c6"
+  },
+  "notes": [
+    "如需新增颜色必须先评审，不允许各卡自由扩色",
+    "前端 CSS variable 命名约定：--art-ink, --art-paper, --art-accent-teal, ...",
+    "如未来引入新流派，复制本文件改 style_id 并放新文件，不覆盖此份"
+  ]
+}

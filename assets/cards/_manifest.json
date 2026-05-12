@@ -1,0 +1,87 @@
+{
+  "version": "1",
+  "updated_at": "2026-05-11",
+  "style_id": "modern_retro_pixel",
+  "palette_ref": "./_palette.json",
+  "spec_ref": "./_spec.md",
+  "design_brief_ref": "../../docs/design-brief-pixel-cards.md",
+  "statuses": {
+    "placeholder": "占位资产，非美术稿",
+    "draft": "画师初稿，待审",
+    "revising": "改稿中",
+    "final": "终稿，已上线"
+  },
+  "cards": [
+    {
+      "id": "01-light-chat",
+      "persona_id": "light_chat",
+      "name": "轻量对话",
+      "status": "placeholder",
+      "current_path": "../placeholders/card-01.svg",
+      "final_path_expected": "./01-light-chat/card.svg",
+      "artist": null,
+      "version": "0.0",
+      "last_review": null
+    },
+    {
+      "id": "02-research",
+      "persona_id": "research",
+      "name": "学习研究",
+      "status": "placeholder",
+      "current_path": "../placeholders/card-02.svg",
+      "final_path_expected": "./02-research/card.svg",
+      "artist": null,
+      "version": "0.0",
+      "last_review": null
+    },
+    {
+      "id": "03-content",
+      "persona_id": "content_creation",
+      "name": "内容创作",
+      "status": "placeholder",
+      "current_path": "../placeholders/card-03.svg",
+      "final_path_expected": "./03-content/card.svg",
+      "artist": null,
+      "version": "0.0",
+      "last_review": null
+    },
+    {
+      "id": "04-coding",
+      "persona_id": "coding",
+      "name": "编程开发",
+      "status": "placeholder",
+      "current_path": "../placeholders/card-04.svg",
+      "final_path_expected": "./04-coding/card.svg",
+      "artist": null,
+      "version": "0.0",
+      "last_review": null
+    },
+    {
+      "id": "05-heavy",
+      "persona_id": "ai_heavy",
+      "name": "AI 重度依赖",
+      "status": "placeholder",
+      "current_path": "../placeholders/card-05.svg",
+      "final_path_expected": "./05-heavy/card.svg",
+      "artist": null,
+      "version": "0.0",
+      "last_review": null
+    },
+    {
+      "id": "06-api",
+      "persona_id": "api_integration",
+      "name": "API 集成开发",
+      "status": "placeholder",
+      "current_path": "../placeholders/card-06.svg",
+      "final_path_expected": "./06-api/card.svg",
+      "artist": null,
+      "version": "0.0",
+      "last_review": null
+    }
+  ],
+  "notes": [
+    "代码必须通过 current_path 引用资产，绝不硬编码具体文件路径",
+    "更换为终稿只需把 status 改为 final，current_path 改为 final_path_expected，代码无需修改",
+    "新增卡片必须先在此 manifest 注册，未注册的卡禁止上线"
+  ]
+}

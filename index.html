@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>你在为 AI 付多少钱？ · Network4Claude</title>
+  <meta name="description" content="一张暖色调的 AI 订阅价格地图。">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-bg: #FAF9F5;
+      --color-surface: #F0EBE0;
+      --color-surface-strong: #E8E1D3;
+      --color-ink: #1A1A1A;
+      --color-ink-2: #5C5752;
+      --color-ink-3: #8B857E;
+      --color-accent: #D97757;
+      --color-accent-strong: #B45C3F;
+      --color-border: #E8E1D3;
+      --color-border-strong: #D4CCB8;
+      --color-danger: #A03B2A;
+
+      --font-serif: "Newsreader", "Source Serif Pro", "Charter", Georgia, serif;
+      --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+      --font-mono: "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+
+      /* Liquid easing curves */
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+      --ease-spring: cubic-bezier(0.34, 1.45, 0.64, 1);  /* slight overshoot — magnetic snap */
+      --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { height: 100%; }
+    html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+
+    body {
+      margin: 0;
+      background: var(--color-bg);
+      color: var(--color-ink);
+      font-family: var(--font-sans);
+      font-size: 16px;
+      line-height: 1.55;
+      letter-spacing: 0.01em;
+      overflow: hidden;       /* no scroll on desktop */
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    .page {
+      height: 100vh;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 20px 28px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* ───── masthead ───── */
+
+    .masthead {
+      flex: 0 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--color-border);
+      font-size: 13px;
+      color: var(--color-ink-3);
+    }
+
+    .brand {
+      font-family: var(--font-serif);
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--color-ink);
+      letter-spacing: -0.01em;
+    }
+    .brand-mark { color: var(--color-accent); }
+
+    .masthead-right {
+      display: flex;
+      gap: 18px;
+      align-items: baseline;
+    }
+    .masthead-link {
+      color: var(--color-ink-2);
+      text-decoration: underline;
+      text-decoration-color: var(--color-border-strong);
+      text-underline-offset: 3px;
+      transition: text-decoration-color 200ms var(--ease-out);
+    }
+    .masthead-link:hover { text-decoration-color: var(--color-accent); }
+    .masthead-meta { letter-spacing: 0.04em; }
+
+    /* ───── stage (hero ↔ snapshot, stacked cross-fade) ───── */
+
+    .stage {
+      flex: 1 1 auto;
+      position: relative;
+      min-height: 0;
+      display: flex;
+      align-items: center;
+    }
+
+    .stage-hero, .stage-snapshot {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      will-change: opacity, transform, filter;
+      transition:
+        opacity 480ms var(--ease-smooth),
+        transform 600ms var(--ease-out),
+        filter 360ms var(--ease-smooth);
+    }
+
+    .stage[data-mode="hero"] .stage-snapshot {
+      opacity: 0;
+      transform: scale(0.96) translateY(24px);
+      filter: blur(8px);
+      pointer-events: none;
+    }
+    .stage[data-mode="snapshot"] .stage-hero {
+      opacity: 0;
+      transform: scale(1.04) translateY(-24px);
+      filter: blur(8px);
+      pointer-events: none;
+    }
+
+    /* ───── hero ───── */
+
+    .stage-hero {
+      max-width: 760px;
+    }
+
+    .stage-hero h1 {
+      margin: 0;
+      font-family: var(--font-serif);
+      font-size: clamp(36px, 5.5vw, 60px);
+      font-weight: 500;
+      line-height: 1.08;
+      letter-spacing: -0.015em;
+      color: var(--color-ink);
+    }
+
+    .stage-hero h1 .ink-accent {
+      text-decoration: underline;
+      text-decoration-color: var(--color-accent);
+      text-decoration-thickness: 4px;
+      text-underline-offset: 8px;
+      text-decoration-skip-ink: none;
+    }
+
+    .stage-hero .lede {
+      max-width: 560px;
+      margin: 20px 0 0;
+      font-family: var(--font-serif);
+      font-size: clamp(17px, 2vw, 20px);
+      font-weight: 400;
+      line-height: 1.55;
+      color: var(--color-ink-2);
+      font-style: italic;
+    }
+
+    /* ───── snapshot layout ───── */
+
+    .stage-snapshot { gap: 18px; }
+
+    .snapshot-head { flex: 0 0 auto; }
+
+    .snapshot-eyebrow {
+      margin: 0 0 6px;
+      font-family: var(--font-serif);
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--color-ink-3);
+    }
+
+    .profile-name {
+      margin: 0;
+      font-family: var(--font-serif);
+      font-size: clamp(28px, 4vw, 42px);
+      font-weight: 500;
+      line-height: 1.1;
+      letter-spacing: -0.012em;
+      color: var(--color-ink);
+    }
+
+    .profile-tagline {
+      max-width: 580px;
+      margin: 8px 0 0;
+      font-family: var(--font-serif);
+      font-size: clamp(15px, 1.6vw, 18px);
+      font-style: italic;
+      line-height: 1.5;
+      color: var(--color-ink-2);
+    }
+
+    .snapshot-grid {
+      flex: 1 1 auto;
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 48px;
+      align-items: start;
+      min-height: 0;
+    }
+
+    /* CRITICAL: grid items default to min-width: auto (= min-content),
+       which makes the SVG's intrinsic viewBox push the cell wider than
+       grid-template-columns allows. min-width: 0 fixes that. */
+    .snapshot-chart {
+      max-width: 280px;
+      min-width: 0;
+      overflow: hidden;
+    }
+    .snapshot-prices {
+      min-width: 0;
+      overflow: hidden;
+    }
+
+    .panel-cap {
+      margin: 0 0 10px;
+      font-family: var(--font-serif);
+      font-size: 12px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--color-ink-3);
+    }
+
+    /* radar */
+
+    #radarMount { width: 100%; max-width: 280px; }
+    .radar {
+      width: 100%;
+      max-width: 280px;
+      height: auto;
+      aspect-ratio: 1 / 1;
+      display: block;
+    }
+    .radar-rings polygon {
+      fill: none;
+      stroke: var(--color-border);
+      stroke-width: 1;
+      stroke-dasharray: 3 3;
+    }
+    .radar-axes line {
+      stroke: var(--color-border-strong);
+      stroke-width: 1;
+    }
+    .radar-data {
+      fill: var(--color-accent);
+      fill-opacity: 0.18;
+      stroke: var(--color-accent);
+      stroke-width: 2;
+      stroke-linejoin: round;
+    }
+    .radar-dot {
+      fill: var(--color-accent);
+      transition: cx 540ms var(--ease-out), cy 540ms var(--ease-out);
+    }
+    .radar-label {
+      font-family: var(--font-serif);
+      font-size: 12px;
+      fill: var(--color-ink-2);
+    }
+
+    .radar-totals {
+      margin: 10px 0 0;
+      font-size: 12px;
+      line-height: 1.55;
+      color: var(--color-ink-3);
+    }
+
+    /* prices */
+
+    .snapshot-prices { display: flex; flex-direction: column; min-height: 0; }
+
+    .price-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      border-top: 1px solid var(--color-border);
+    }
+
+    .price-tier {
+      display: grid;
+      grid-template-columns: 56px 1fr auto;
+      gap: 16px;
+      align-items: baseline;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--color-border);
+      transition:
+        opacity 380ms var(--ease-smooth),
+        transform 380ms var(--ease-out),
+        filter 320ms var(--ease-smooth);
+    }
+    .price-tier.is-morphing {
+      opacity: 0;
+      transform: translateY(6px);
+      filter: blur(3px);
+    }
+
+    .tier-rank {
+      font-family: var(--font-serif);
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      color: var(--color-ink-3);
+    }
+
+    .tier-source {
+      font-family: var(--font-serif);
+      font-size: 17px;
+      font-weight: 500;
+      line-height: 1.25;
+      color: var(--color-ink);
+    }
+
+    .tier-note {
+      display: block;
+      margin-top: 1px;
+      font-family: var(--font-sans);
+      font-size: 11px;
+      color: var(--color-ink-3);
+    }
+
+    .tier-amount {
+      font-family: var(--font-mono);
+      font-variant-numeric: tabular-nums;
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--color-ink);
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .price-baseline {
+      margin: 10px 0 0;
+      font-size: 12px;
+      line-height: 1.55;
+      color: var(--color-ink-3);
+    }
+
+    /* ───── personas (with magnetic hover + focus dim) ───── */
+
+    .personas-section {
+      flex: 0 0 auto;
+    }
+
+    .section-prompt {
+      margin: 0 0 12px;
+      font-family: var(--font-serif);
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--color-ink-3);
+    }
+
+    .persona-row {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .persona-card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 6px;
+      padding: 16px 14px;
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+      background: transparent;
+      color: var(--color-ink);
+      text-align: left;
+      cursor: pointer;
+      font: inherit;
+      will-change: transform, opacity, filter;
+      transition:
+        transform 380ms var(--ease-spring),
+        border-color 240ms var(--ease-out),
+        background 240ms var(--ease-out),
+        opacity 280ms var(--ease-smooth),
+        filter 280ms var(--ease-smooth);
+    }
+
+    .persona-card:hover {
+      transform: translateY(-4px) scale(1.035);
+      border-color: var(--color-ink);
+      background: var(--color-surface);
+      z-index: 2;
+    }
+
+    /* focus mode: when ANY card is hovered, the others blur + dim */
+    .persona-row.is-focusing .persona-card:not(:hover):not(.is-selected) {
+      opacity: 0.42;
+      filter: blur(1px);
+      transform: scale(0.985);
+    }
+
+    .persona-card.is-selected {
+      border-color: var(--color-ink);
+      background: var(--color-surface);
+    }
+
+    .persona-num {
+      font-family: var(--font-serif);
+      font-size: 12px;
+      color: var(--color-ink-3);
+      letter-spacing: 0.06em;
+      transition: color 240ms var(--ease-out);
+    }
+    .persona-card.is-selected .persona-num,
+    .persona-card:hover .persona-num { color: var(--color-accent); }
+
+    .persona-name {
+      font-family: var(--font-serif);
+      font-size: 17px;
+      font-weight: 500;
+      line-height: 1.2;
+      color: var(--color-ink);
+    }
+
+    .persona-blurb {
+      font-size: 12px;
+      line-height: 1.45;
+      color: var(--color-ink-2);
+    }
+
+    /* ───── footer ───── */
+
+    .colophon {
+      flex: 0 0 auto;
+      padding-top: 10px;
+      border-top: 1px solid var(--color-border);
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 16px;
+      font-size: 12px;
+      color: var(--color-ink-3);
+    }
+
+    .colophon a {
+      color: var(--color-ink-2);
+      text-decoration: underline;
+      text-decoration-color: var(--color-border-strong);
+      text-underline-offset: 3px;
+      transition: text-decoration-color 200ms var(--ease-out);
+    }
+    .colophon a:hover { text-decoration-color: var(--color-accent); }
+
+    /* ───── error ───── */
+
+    .error-banner {
+      position: fixed;
+      left: 50%;
+      bottom: 20px;
+      transform: translateX(-50%);
+      padding: 12px 18px;
+      border: 1px solid var(--color-danger);
+      border-radius: 8px;
+      background: var(--color-bg);
+      color: var(--color-danger);
+      font-size: 13px;
+      display: none;
+      max-width: 90vw;
+      z-index: 10;
+    }
+    .error-banner.is-visible { display: block; }
+
+    /* ───── responsive fallback ───── */
+
+    @media (max-height: 720px), (max-width: 760px) {
+      body { overflow: auto; }
+      .page { height: auto; min-height: 100vh; }
+      .stage { min-height: 360px; }
+      .persona-row { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
+      .snapshot-grid {
+        grid-template-columns: 1fr;
+        gap: 24px;
+      }
+    }
+
+    /* ───── reduced motion ───── */
+
+    @media (prefers-reduced-motion: reduce) {
+      .stage-hero, .stage-snapshot, .persona-card,
+      .price-tier, .radar-dot, .masthead-link, .colophon a {
+        transition: opacity 200ms linear !important;
+        transform: none !important;
+        filter: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+
+    <header class="masthead">
+      <span class="brand">Network<span class="brand-mark">4</span>Claude</span>
+      <span class="masthead-right">
+        <a class="masthead-link" href="#workbench">完整工作台</a>
+        <span class="masthead-meta">更新于 2026-05-12</span>
+      </span>
+    </header>
+
+    <div class="stage" id="stage" data-mode="hero">
+
+      <section class="stage-hero" id="stageHero" aria-label="开场">
+        <h1>你在为 <span class="ink-accent">AI</span> 付多少钱？</h1>
+        <p class="lede">一张暖色调的价格地图——选一个最像你的，看见同一画像下不同渠道的价格分布。我们不告诉你该选哪个，只让你看见你在地图上的位置。</p>
+      </section>
+
+      <section class="stage-snapshot" id="stageSnapshot" aria-label="当前画像" aria-live="polite">
+        <header class="snapshot-head">
+          <p class="snapshot-eyebrow">这一类画像</p>
+          <h2 class="profile-name" id="profileName">—</h2>
+          <p class="profile-tagline" id="profileTagline">—</p>
+        </header>
+
+        <div class="snapshot-grid">
+          <div class="snapshot-chart">
+            <p class="panel-cap">用量与工作风格</p>
+            <div id="radarMount"></div>
+            <p class="radar-totals" id="radarTotals">—</p>
+          </div>
+          <div class="snapshot-prices">
+            <p class="panel-cap">月度价格三档</p>
+            <ol class="price-list" id="priceList"></ol>
+            <p class="price-baseline" id="priceBaseline">—</p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <section class="personas-section" aria-label="使用画像">
+      <p class="section-prompt">你看起来像</p>
+      <div class="persona-row" id="personaRow" role="radiogroup" aria-label="使用画像"></div>
+    </section>
+
+    <footer class="colophon">
+      <span>Network4Claude · 开源的 AI 订阅价格地图</span>
+      <span><a href="./Design.md">设计语言</a> · <a href="./AGENTS.md">仓库规约</a></span>
+    </footer>
+
+    <div class="error-banner" id="errorBanner"></div>
+  </div>
+
+  <script type="module">
+    const USD_TO_CNY = 7;
+
+    const CHANNEL_RATIO = {
+      cheap: { cny_per_usd: 2.5, source: "号池 / 拼车一档" },
+      mid:   { cny_per_usd: 5.5, source: "OpenRouter / AiHubMix 一档" },
+    };
+
+    const PLAN_INFO = {
+      claude_pro:       { name: "Claude Pro",        usd: 20 },
+      claude_max_5x:    { name: "Claude Max 5x",     usd: 100 },
+      claude_max_20x:   { name: "Claude Max 20x",    usd: 200 },
+      openai_plus:      { name: "ChatGPT Plus",      usd: 20 },
+      openai_pro_100:   { name: "ChatGPT Pro",       usd: 100 },
+      openai_pro_200:   { name: "ChatGPT Pro 20x",   usd: 200 },
+    };
+
+    const INTENSITY_MAP = {
+      light: 0.18, light_medium: 0.32, medium: 0.52,
+      medium_heavy: 0.72, heavy: 1.00, variable: 0.50,
+    };
+
+    const RADAR_AXES = ["输入", "输出", "缓存读", "缓存写", "持续度"];
+
+    // ───── helpers ─────
+
+    const wait = ms => new Promise(r => setTimeout(r, ms));
+    const easeOutCubic = t => 1 - Math.pow(1 - t, 3);
+
+    async function loadJson(path) {
+      const r = await fetch(path, { cache: "no-store" });
+      if (!r.ok) throw new Error(`${path} → HTTP ${r.status}`);
+      return r.json();
+    }
+
+    function aggregateUsage(persona) {
+      const sums = { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 };
+      for (const u of Object.values(persona?.monthly_usage?.by_model || {})) {
+        sums.input      += u.input || 0;
+        sums.output     += u.output || 0;
+        sums.cacheRead  += u.cache_read || 0;
+        sums.cacheWrite += (u.cache_write_5m || 0) + (u.cache_write_1h || 0);
+      }
+      return sums;
+    }
+
+    function sqrtNorm(v, max) {
+      if (!max || !v || v <= 0) return 0;
+      return Math.sqrt(Math.min(v / max, 1));
+    }
+
+    function computeRadarValues(persona, allPersonas) {
+      const aggregates = allPersonas.map(aggregateUsage);
+      const max = aggregates.reduce((acc, a) => ({
+        input: Math.max(acc.input, a.input),
+        output: Math.max(acc.output, a.output),
+        cacheRead: Math.max(acc.cacheRead, a.cacheRead),
+        cacheWrite: Math.max(acc.cacheWrite, a.cacheWrite),
+      }), { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 });
+      const me = aggregateUsage(persona);
+      return [
+        sqrtNorm(me.input, max.input),
+        sqrtNorm(me.output, max.output),
+        sqrtNorm(me.cacheRead, max.cacheRead),
+        sqrtNorm(me.cacheWrite, max.cacheWrite),
+        INTENSITY_MAP[persona.intensity] ?? 0.5,
+      ];
+    }
+
+    function computeApiCostUsd(persona, pricing) {
+      let total = 0;
+      const models = pricing?.models || {};
+      for (const [key, u] of Object.entries(persona?.monthly_usage?.by_model || {})) {
+        const lookup = key.replace(/^claude_/, "");
+        const m = models[lookup] || models.sonnet_4_6;
+        if (!m) continue;
+        total += (u.input || 0)          / 1e6 * (m.base_input || 0);
+        total += (u.output || 0)         / 1e6 * (m.output || 0);
+        total += (u.cache_read || 0)     / 1e6 * (m.cache_read || 0);
+        total += (u.cache_write_5m || 0) / 1e6 * (m.cache_write_5m || 0);
+        total += (u.cache_write_1h || 0) / 1e6 * (m.cache_write_1h || 0);
+      }
+      return total;
+    }
+
+    function computeTiers(persona, pricing) {
+      const apiUsd = computeApiCostUsd(persona, pricing);
+      const planId = persona.recommended_plans?.[0];
+
+      const cheap = {
+        source: "廉价中转",
+        note:   `${CHANNEL_RATIO.cheap.source}，按 ¥${CHANNEL_RATIO.cheap.cny_per_usd}/$1`,
+        cny:    apiUsd * CHANNEL_RATIO.cheap.cny_per_usd,
+      };
+      const mid = {
+        source: "正规中转",
+        note:   `${CHANNEL_RATIO.mid.source}，按 ¥${CHANNEL_RATIO.mid.cny_per_usd}/$1`,
+        cny:    apiUsd * CHANNEL_RATIO.mid.cny_per_usd,
+      };
+      let official;
+      if (planId === "official_api" || !planId) {
+        official = {
+          source: "官方 API 直购",
+          note:   `按你的用量直接调用，¥${USD_TO_CNY}/$1`,
+          cny:    apiUsd * USD_TO_CNY,
+        };
+      } else {
+        const info = PLAN_INFO[planId];
+        official = {
+          source: info?.name || planId,
+          note:   info ? `$${info.usd}/月 × ¥${USD_TO_CNY}/$1` : "官方订阅",
+          cny:    (info?.usd || 0) * USD_TO_CNY,
+        };
+      }
+
+      return { apiUsd, tiers: [cheap, mid, official] };
+    }
+
+    function fmtCny(value) {
+      if (!isFinite(value)) return "—";
+      if (value <= 0) return "¥0";
+      const rounded = value < 10 ? value.toFixed(1) : Math.round(value);
+      return "¥" + Number(rounded).toLocaleString("zh-CN");
+    }
+    function fmtUsd(value) {
+      if (!isFinite(value)) return "—";
+      const rounded = value < 10 ? value.toFixed(1) : Math.round(value);
+      return "$" + Number(rounded).toLocaleString("en-US");
+    }
+    function fmtTokens(value) {
+      if (!value) return "0";
+      if (value >= 1e9) return (value / 1e9).toFixed(1) + " B";
+      if (value >= 1e6) return (value / 1e6).toFixed(1) + " M";
+      if (value >= 1e3) return (value / 1e3).toFixed(0) + " K";
+      return String(value);
+    }
+    function shortBlurb(p) {
+      const tag = p.tagline || "";
+      return tag.length > 20 ? tag.slice(0, 18).trim() + "…" : tag;
+    }
+
+    // ───── radar svg (with interpolated morph) ─────
+
+    const RADAR_GEO = (() => {
+      const N = 5;
+      const cx = 160, cy = 160, r = 100;
+      const angleAt = i => -Math.PI / 2 + (i / N) * Math.PI * 2;
+      return {
+        N, cx, cy, r,
+        pointAt: (v, i) => {
+          const a = angleAt(i);
+          return [cx + v * r * Math.cos(a), cy + v * r * Math.sin(a)];
+        },
+        angleAt,
+      };
+    })();
+
+    function buildRadarShell() {
+      const { N, cx, cy, pointAt, angleAt } = RADAR_GEO;
+      const rings = [0.25, 0.5, 0.75, 1.0].map(s => {
+        const pts = Array.from({ length: N }, (_, i) => pointAt(s, i).map(n => n.toFixed(2)).join(","));
+        return `<polygon points="${pts.join(" ")}"/>`;
+      }).join("");
+      const axes = Array.from({ length: N }, (_, i) => {
+        const [x, y] = pointAt(1.0, i);
+        return `<line x1="${cx}" y1="${cy}" x2="${x.toFixed(2)}" y2="${y.toFixed(2)}"/>`;
+      }).join("");
+      const labels = RADAR_AXES.map((label, i) => {
+        const [x, y] = pointAt(1.26, i);
+        const angle = angleAt(i);
+        let anchor = "middle";
+        if (Math.cos(angle) > 0.3) anchor = "start";
+        else if (Math.cos(angle) < -0.3) anchor = "end";
+        return `<text class="radar-label" x="${x.toFixed(2)}" y="${y.toFixed(2)}" text-anchor="${anchor}" dominant-baseline="middle">${label}</text>`;
+      }).join("");
+
+      return `
+        <svg class="radar" viewBox="0 0 320 320" role="img" aria-label="用量画像雷达图">
+          <g class="radar-rings">${rings}</g>
+          <g class="radar-axes">${axes}</g>
+          <polygon class="radar-data" id="radarData" points=""/>
+          <g class="radar-dots" id="radarDots"></g>
+          <g class="radar-labels">${labels}</g>
+        </svg>
+      `;
+    }
+
+    function renderRadarFromValues(values) {
+      const { N, pointAt } = RADAR_GEO;
+      const visible = values.map(v => Math.max(v, 0.02));
+      const pts = visible.map((v, i) => pointAt(v, i).map(n => n.toFixed(2)).join(","));
+      document.getElementById("radarData").setAttribute("points", pts.join(" "));
+      const dotsHtml = visible.map((v, i) => {
+        const [x, y] = pointAt(v, i);
+        return `<circle class="radar-dot" cx="${x.toFixed(2)}" cy="${y.toFixed(2)}" r="3"/>`;
+      }).join("");
+      document.getElementById("radarDots").innerHTML = dotsHtml;
+    }
+
+    // ───── liquid morphs ─────
+
+    let radarAnimFrame = null;
+    let radarCurrentValues = null;
+
+    function morphRadarTo(targetValues, duration = 560) {
+      if (radarAnimFrame) cancelAnimationFrame(radarAnimFrame);
+      if (!radarCurrentValues) {
+        radarCurrentValues = [...targetValues];
+        renderRadarFromValues(radarCurrentValues);
+        return;
+      }
+      const from = [...radarCurrentValues];
+      const to = [...targetValues];
+      const start = performance.now();
+      const step = (now) => {
+        const t = Math.min((now - start) / duration, 1);
+        const e = easeOutCubic(t);
+        radarCurrentValues = from.map((v, i) => v + (to[i] - v) * e);
+        renderRadarFromValues(radarCurrentValues);
+        if (t < 1) radarAnimFrame = requestAnimationFrame(step);
+      };
+      radarAnimFrame = requestAnimationFrame(step);
+    }
+
+    const numberAnimFrames = new WeakMap();
+
+    function morphNumber(el, fromValue, toValue, dur = 560, fmt = fmtCny, suffix = " / 月") {
+      const prev = numberAnimFrames.get(el);
+      if (prev) cancelAnimationFrame(prev);
+      const start = performance.now();
+      const step = (now) => {
+        const t = Math.min((now - start) / dur, 1);
+        const e = easeOutCubic(t);
+        const v = fromValue + (toValue - fromValue) * e;
+        el.textContent = fmt(v) + suffix;
+        if (t < 1) numberAnimFrames.set(el, requestAnimationFrame(step));
+      };
+      numberAnimFrames.set(el, requestAnimationFrame(step));
+    }
+
+    // ───── element refs ─────
+
+    const els = {
+      stage:          document.getElementById("stage"),
+      hero:           document.getElementById("stageHero"),
+      snapshot:       document.getElementById("stageSnapshot"),
+      personaRow:     document.getElementById("personaRow"),
+      profileName:    document.getElementById("profileName"),
+      profileTagline: document.getElementById("profileTagline"),
+      radarMount:     document.getElementById("radarMount"),
+      radarTotals:    document.getElementById("radarTotals"),
+      priceList:      document.getElementById("priceList"),
+      priceBaseline:  document.getElementById("priceBaseline"),
+      error:          document.getElementById("errorBanner"),
+    };
+
+    const state = {
+      personas: [],
+      pricing: null,
+      activeId: null,
+      stageMode: "hero",
+      previousTierCnys: [null, null, null],
+    };
+
+    // ───── render ─────
+
+    function renderPersonas() {
+      const cards = state.personas.map((p, i) => `
+        <button class="persona-card${p.id === state.activeId ? " is-selected" : ""}"
+                role="radio"
+                aria-checked="${p.id === state.activeId}"
+                data-persona="${p.id}"
+                type="button">
+          <span class="persona-num">${String(i + 1).padStart(2, "0")}</span>
+          <span class="persona-name">${p.name}</span>
+          <span class="persona-blurb">${shortBlurb(p)}</span>
+        </button>
+      `).join("");
+      els.personaRow.innerHTML = cards;
+    }
+
+    function syncCardStates() {
+      els.personaRow.querySelectorAll(".persona-card").forEach(card => {
+        const isMe = card.dataset.persona === state.activeId;
+        card.classList.toggle("is-selected", isMe);
+        card.setAttribute("aria-checked", String(isMe));
+      });
+    }
+
+    function buildPriceTierHtml(t, rank) {
+      const rankLabel = ["最低", "中档", "最高"][rank];
+      return `
+        <li class="price-tier" data-rank="${rank}">
+          <span class="tier-rank">${rankLabel}</span>
+          <span>
+            <span class="tier-source">${t.source}</span>
+            <span class="tier-note">${t.note}</span>
+          </span>
+          <span class="tier-amount" data-cny="${t.cny}">${fmtCny(t.cny)} / 月</span>
+        </li>
+      `;
+    }
+
+    function renderSnapshotInitial(persona) {
+      els.profileName.textContent = persona.name;
+      els.profileTagline.textContent = persona.tagline || "";
+
+      const radarValues = computeRadarValues(persona, state.personas);
+      els.radarMount.innerHTML = buildRadarShell();
+      radarCurrentValues = null;  // first render — no morph
+      morphRadarTo(radarValues);
+
+      const u = aggregateUsage(persona);
+      const total = u.input + u.output + u.cacheRead + u.cacheWrite;
+      els.radarTotals.textContent = total <= 0
+        ? "无固定用量画像——这一类用户按项目波动。"
+        : `月度合计 ${fmtTokens(total)} token：input ${fmtTokens(u.input)} · output ${fmtTokens(u.output)} · cache 读 ${fmtTokens(u.cacheRead)}` +
+          (u.cacheWrite > 0 ? ` · cache 写 ${fmtTokens(u.cacheWrite)}` : "") + "。";
+
+      const { apiUsd, tiers } = computeTiers(persona, state.pricing);
+      const sorted = [...tiers].sort((a, b) => a.cny - b.cny);
+      els.priceList.innerHTML = sorted.map((t, i) => buildPriceTierHtml(t, i)).join("");
+      state.previousTierCnys = sorted.map(t => t.cny);
+      els.priceBaseline.textContent = apiUsd <= 0
+        ? "API 基线：这一类用户没有默认用量画像。"
+        : `API 基线：这一类用量直接调用官方 API 约 ${fmtUsd(apiUsd)}/月。`;
+    }
+
+    async function morphSnapshot(persona) {
+      // 1) radar: continuous polygon morph
+      const newRadarValues = computeRadarValues(persona, state.personas);
+      morphRadarTo(newRadarValues);
+
+      // 2) text labels (name, tagline, totals, baseline): cross-fade brief
+      const textTargets = [els.profileName, els.profileTagline, els.radarTotals, els.priceBaseline];
+      textTargets.forEach(el => {
+        el.style.transition = "opacity 220ms var(--ease-smooth), filter 220ms var(--ease-smooth)";
+        el.style.opacity = "0";
+        el.style.filter = "blur(3px)";
+      });
+      await wait(220);
+
+      els.profileName.textContent = persona.name;
+      els.profileTagline.textContent = persona.tagline || "";
+      const u = aggregateUsage(persona);
+      const total = u.input + u.output + u.cacheRead + u.cacheWrite;
+      els.radarTotals.textContent = total <= 0
+        ? "无固定用量画像——这一类用户按项目波动。"
+        : `月度合计 ${fmtTokens(total)} token：input ${fmtTokens(u.input)} · output ${fmtTokens(u.output)} · cache 读 ${fmtTokens(u.cacheRead)}` +
+          (u.cacheWrite > 0 ? ` · cache 写 ${fmtTokens(u.cacheWrite)}` : "") + "。";
+      const { apiUsd, tiers } = computeTiers(persona, state.pricing);
+      const sorted = [...tiers].sort((a, b) => a.cny - b.cny);
+
+      textTargets.forEach(el => {
+        el.style.opacity = "";
+        el.style.filter = "";
+      });
+      els.priceBaseline.textContent = apiUsd <= 0
+        ? "API 基线：这一类用户没有默认用量画像。"
+        : `API 基线：这一类用量直接调用官方 API 约 ${fmtUsd(apiUsd)}/月。`;
+
+      // 3) price tiers: blur-out, swap source labels, animate numbers
+      const tierEls = els.priceList.querySelectorAll(".price-tier");
+      tierEls.forEach(el => el.classList.add("is-morphing"));
+      await wait(220);
+
+      // swap source / note text instantly while invisible
+      sorted.forEach((t, i) => {
+        const li = tierEls[i];
+        if (!li) return;
+        li.querySelector(".tier-source").textContent = t.source;
+        li.querySelector(".tier-note").textContent = t.note;
+        const amountEl = li.querySelector(".tier-amount");
+        const prevCny = state.previousTierCnys[i] ?? t.cny;
+        morphNumber(amountEl, prevCny, t.cny);
+      });
+      state.previousTierCnys = sorted.map(t => t.cny);
+
+      // fade back in
+      requestAnimationFrame(() => {
+        tierEls.forEach(el => el.classList.remove("is-morphing"));
+      });
+    }
+
+    async function transitionHeroToSnapshot(persona) {
+      renderSnapshotInitial(persona);
+      els.stage.dataset.mode = "snapshot";
+      state.stageMode = "snapshot";
+      // wait for transition to complete before allowing rapid re-morphs
+      await wait(600);
+    }
+
+    async function selectPersona(id) {
+      const persona = state.personas.find(p => p.id === id);
+      if (!persona) return;
+      const isSame = state.activeId === id;
+      state.activeId = id;
+      syncCardStates();
+
+      if (state.stageMode === "hero") {
+        await transitionHeroToSnapshot(persona);
+      } else if (!isSame) {
+        await morphSnapshot(persona);
+      }
+    }
+
+    // ───── focus-mode hover (the "卡屏" effect) ─────
+
+    function wireFocusMode() {
+      els.personaRow.addEventListener("mouseover", e => {
+        if (e.target.closest(".persona-card")) {
+          els.personaRow.classList.add("is-focusing");
+        }
+      });
+      els.personaRow.addEventListener("mouseleave", () => {
+        els.personaRow.classList.remove("is-focusing");
+      });
+    }
+
+    function showError(msg) {
+      els.error.textContent = msg;
+      els.error.classList.add("is-visible");
+    }
+
+    // ───── init ─────
+
+    async function init() {
+      try {
+        const [pricingRaw, personasRaw] = await Promise.all([
+          loadJson("./data/pricing.json"),
+          loadJson("./data/personas.json"),
+        ]);
+        state.pricing = pricingRaw;
+        state.personas = personasRaw.personas || [];
+        if (!state.personas.length) throw new Error("personas.json 为空");
+
+        renderPersonas();
+
+        els.personaRow.addEventListener("click", e => {
+          const card = e.target.closest(".persona-card");
+          if (card) selectPersona(card.dataset.persona);
+        });
+
+        wireFocusMode();
+      } catch (err) {
+        showError(`数据没拿到。试试 \`python -m http.server 4173\` 然后访问 http://127.0.0.1:4173/。错误：${err.message}`);
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>

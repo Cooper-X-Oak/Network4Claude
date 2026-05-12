@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>你在哪个价格带 - Network4Claude</title>
+  <style>
+    :root {
+      --bg: #fbfaf7;
+      --surface: #ffffff;
+      --ink: #101828;
+      --muted: #667085;
+      --line: #e7e1d7;
+      --teal: #0f766e;
+      --teal-strong: #115e59;
+      --teal-soft: #ecfdf3;
+      --blue: #2563eb;
+      --risk: #f97316;
+      --danger: #dc2626;
+      --shadow: 0 24px 70px rgba(52, 44, 32, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-width: 320px;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 14% 16%, rgba(15, 118, 110, 0.08), transparent 28%),
+        linear-gradient(180deg, #fffdf8 0%, var(--bg) 100%);
+      font-family: "Inter", "Aptos", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+      font-size: 16px;
+      line-height: 1.5;
+    }
+
+    a,
+    button,
+    input {
+      font: inherit;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .page {
+      width: min(1180px, calc(100vw - 32px));
+      min-height: 100vh;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      gap: 28px;
+      margin: 0 auto;
+      padding: 28px 0;
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--teal-strong);
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+    }
+
+    .brand-mark {
+      width: 22px;
+      height: 22px;
+      border-radius: 7px;
+      background: var(--teal);
+      box-shadow: inset 0 0 0 5px rgba(255, 255, 255, 0.22);
+    }
+
+    .nav-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      padding: 8px 14px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--ink);
+      background: rgba(255, 255, 255, 0.82);
+      font-size: 14px;
+      font-weight: 750;
+      white-space: nowrap;
+    }
+
+    .button.primary {
+      border-color: var(--teal);
+      color: #fff;
+      background: var(--teal);
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.22fr);
+      gap: 34px;
+      align-items: center;
+    }
+
+    .copy {
+      max-width: 470px;
+    }
+
+    .eyebrow {
+      margin: 0 0 12px;
+      color: var(--teal);
+      font-size: 13px;
+      font-weight: 850;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(42px, 6vw, 76px);
+      line-height: 0.95;
+      letter-spacing: -0.02em;
+    }
+
+    .lead {
+      max-width: 430px;
+      margin: 20px 0 0;
+      color: var(--muted);
+      font-size: 18px;
+    }
+
+    .hero-metrics {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 28px;
+    }
+
+    .metric {
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.72);
+    }
+
+    .metric span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 760;
+    }
+
+    .metric strong {
+      display: block;
+      margin-top: 4px;
+      font-size: 22px;
+      line-height: 1.1;
+      font-weight: 860;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .chart-card {
+      position: relative;
+      min-height: 650px;
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      background: rgba(255, 255, 255, 0.86);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .chart-stage {
+      position: relative;
+      height: 520px;
+      margin: 18px;
+      border-radius: 22px;
+      overflow: hidden;
+      background: #fffdf8;
+    }
+
+    #curveCanvas,
+    #curveSvg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    #curveSvg {
+      pointer-events: none;
+    }
+
+    .ticket {
+      position: absolute;
+      right: 28px;
+      bottom: 128px;
+      width: min(310px, calc(100% - 56px));
+      padding: 18px;
+      border: 1px solid rgba(15, 118, 110, 0.22);
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.94);
+      box-shadow: 0 18px 48px rgba(15, 23, 42, 0.13);
+      backdrop-filter: blur(12px);
+    }
+
+    .ticket-label {
+      color: var(--teal);
+      font-size: 12px;
+      font-weight: 850;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .ticket-title {
+      margin-top: 6px;
+      font-size: 28px;
+      line-height: 1.08;
+      font-weight: 880;
+    }
+
+    .ticket-cost {
+      margin-top: 14px;
+      font-size: 40px;
+      line-height: 1;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .ticket-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .tag {
+      display: inline-flex;
+      min-height: 26px;
+      align-items: center;
+      padding: 4px 9px;
+      border-radius: 999px;
+      color: #344054;
+      background: #f2f4f7;
+      font-size: 12px;
+      font-weight: 750;
+    }
+
+    .tag.good {
+      color: #067647;
+      background: #d1fadf;
+    }
+
+    .tag.warn {
+      color: #b54708;
+      background: #fef0c7;
+    }
+
+    .controls {
+      display: grid;
+      gap: 16px;
+      padding: 0 24px 24px;
+    }
+
+    .usage-line {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .usage-value {
+      font-size: 28px;
+      line-height: 1;
+      font-weight: 880;
+      letter-spacing: -0.01em;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .usage-hint {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--teal);
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip {
+      min-height: 32px;
+      padding: 6px 11px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: #344054;
+      background: #fff;
+      font-size: 13px;
+      font-weight: 760;
+      cursor: pointer;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 760;
+    }
+
+    .legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .legend i {
+      width: 18px;
+      height: 4px;
+      border-radius: 999px;
+      background: var(--teal);
+    }
+
+    .legend .api i {
+      background: var(--blue);
+    }
+
+    .legend .risk i {
+      background: var(--risk);
+    }
+
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 680;
+    }
+
+    @media (max-width: 980px) {
+      .hero {
+        grid-template-columns: 1fr;
+      }
+
+      .copy {
+        max-width: 720px;
+      }
+
+      .chart-card {
+        min-height: 610px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .page {
+        width: min(100vw - 20px, 620px);
+        padding: 18px 0;
+      }
+
+      .nav,
+      .usage-line,
+      .footer {
+        display: grid;
+        justify-content: start;
+      }
+
+      .nav-actions {
+        justify-content: flex-start;
+      }
+
+      .hero {
+        gap: 22px;
+      }
+
+      .lead {
+        font-size: 16px;
+      }
+
+      .hero-metrics {
+        grid-template-columns: 1fr;
+      }
+
+      .chart-stage {
+        height: 430px;
+        margin: 12px;
+      }
+
+      .ticket {
+        position: static;
+        width: auto;
+        margin: 0 12px 12px;
+      }
+
+      .controls {
+        padding: 0 14px 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <nav class="nav">
+      <div class="brand">
+        <span class="brand-mark"></span>
+        <span>Network4Claude</span>
+      </div>
+      <div class="nav-actions">
+        <a class="button" href="calculator.html">详细计算器</a>
+        <a class="button primary" href="calculator.html?scenario=custom">自定义</a>
+      </div>
+    </nav>
+
+    <section class="hero">
+      <div class="copy">
+        <p class="eyebrow">Cost Curve</p>
+        <h1>你在哪个价格带？</h1>
+        <p class="lead">拖动用量。看官方 API、官方订阅和低价渠道在同一条价格曲线上分开。</p>
+        <div class="hero-metrics">
+          <div class="metric">
+            <span>官方 API 基准</span>
+            <strong>¥7 / $1</strong>
+          </div>
+          <div class="metric">
+            <span>订阅容量另算</span>
+            <strong>阶梯价</strong>
+          </div>
+        </div>
+      </div>
+
+      <section class="chart-card" aria-label="AI 使用成本曲线">
+        <div class="chart-stage">
+          <canvas id="curveCanvas"></canvas>
+          <svg id="curveSvg" aria-hidden="true"></svg>
+        </div>
+
+        <aside class="ticket" aria-live="polite">
+          <div class="ticket-label">当前推荐</div>
+          <div class="ticket-title" id="ticketTitle">-</div>
+          <div class="ticket-cost" id="ticketCost">-</div>
+          <div class="ticket-meta">
+            <span class="tag good" id="ticketRate">-</span>
+            <span class="tag" id="ticketRisk">-</span>
+          </div>
+        </aside>
+
+        <div class="controls">
+          <div class="usage-line">
+            <div>
+              <div class="usage-value" id="usageLabel">-</div>
+              <div class="usage-hint" id="usageHint">-</div>
+            </div>
+            <div class="legend">
+              <span class="api"><i></i>官方 API</span>
+              <span><i></i>官方订阅</span>
+              <span class="risk"><i></i>低价区</span>
+            </div>
+          </div>
+
+          <input id="usageSlider" type="range" min="0" max="1000" value="520" aria-label="选择 API 等值用量">
+
+          <div class="chips">
+            <button class="chip" type="button" data-usage-usd="50">轻度</button>
+            <button class="chip" type="button" data-usage-usd="200">中度</button>
+            <button class="chip" type="button" data-usage-usd="500">重度</button>
+            <button class="chip" type="button" data-usage-usd="2124">Max 5x</button>
+            <button class="chip" type="button" data-usage-usd="8495">Max 20x</button>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <footer class="footer">
+      <span>官方订阅容量来自 plan-baselines.json。</span>
+      <span>非官方低价只作为风险区间，不构成推荐。</span>
+    </footer>
+  </main>
+
+  <script type="module">
+    import { initPriceCurveApp } from "./scripts/curve-chart.mjs";
+
+    initPriceCurveApp().catch(error => {
+      document.body.insertAdjacentHTML("afterbegin", `<div style="padding:12px;color:#b42318;background:#fef3f2;font-weight:800">${error.message}</div>`);
+    });
+  </script>
+</body>
+</html>

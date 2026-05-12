@@ -1,0 +1,148 @@
+{
+  "version": "2",
+  "updated_at": "2026-05-11",
+  "manifest_ref": "../assets/cards/_manifest.json",
+  "notes": [
+    "6 张角色卡，覆盖从轻量对话到重度依赖到 API 集成的完整梯度。",
+    "团队场景吸收进对应个人卡，团队人数通过 Flow B 处理。",
+    "monthly_usage 字段是该卡的典型月度用量画像（参考值，UI 上只读显示），不带滑块微调；用户要细调请进 Flow B。",
+    "baseline_ref 指向 data/plan-baselines.json 的 api_equivalent_profiles 条目，用于成本反算。",
+    "art_ref 指向 assets/cards/_manifest.json 的 card.id；UI 必须通过 manifest 解析 current_path，不允许硬编码 SVG 路径。"
+  ],
+  "personas": [
+    {
+      "id": "light_chat",
+      "art_ref": "01-light-chat",
+      "name": "轻量对话",
+      "tagline": "偶尔问问题、写邮件、查资料",
+      "intensity": "light",
+      "monthly_usage": {
+        "primary_model": "gpt_5_5",
+        "by_model": {
+          "gpt_5_5": {
+            "input": 30000,
+            "cached_input": 0,
+            "output": 8000,
+            "messages": 300
+          }
+        }
+      },
+      "baseline_ref": null,
+      "baseline_note": "低于 chatgpt_gpt_5_5_plus_400_usd_profile，订阅基本够用",
+      "recommended_plans": ["openai_plus", "claude_pro"],
+      "avoid_channels": ["black_card"]
+    },
+    {
+      "id": "research",
+      "art_ref": "02-research",
+      "name": "学习研究",
+      "tagline": "文献精读、笔记总结、追问",
+      "intensity": "light_medium",
+      "monthly_usage": {
+        "primary_model": "claude_sonnet_4_6",
+        "by_model": {
+          "claude_sonnet_4_6": {
+            "input": 200000,
+            "cached_input": 0,
+            "output": 30000,
+            "cache_read": 50000,
+            "cache_write_5m": 0,
+            "cache_write_1h": 0
+          }
+        }
+      },
+      "baseline_ref": "chatgpt_gpt_5_5_plus_400_usd_profile",
+      "baseline_note": "用量接近 Plus profile",
+      "recommended_plans": ["claude_pro", "openai_plus"],
+      "avoid_channels": ["black_card", "pool_sharing"]
+    },
+    {
+      "id": "content_creation",
+      "art_ref": "03-content",
+      "name": "内容创作",
+      "tagline": "写稿、营销、文案、翻译",
+      "intensity": "medium",
+      "monthly_usage": {
+        "primary_model": "claude_sonnet_4_6",
+        "by_model": {
+          "claude_sonnet_4_6": {
+            "input": 100000,
+            "cached_input": 0,
+            "output": 100000,
+            "cache_read": 30000,
+            "cache_write_5m": 0,
+            "cache_write_1h": 0
+          }
+        }
+      },
+      "baseline_ref": "chatgpt_gpt_5_5_plus_400_usd_profile",
+      "baseline_note": "重输出场景，比典型 Plus profile 输出量大",
+      "recommended_plans": ["claude_pro", "claude_max_5x"],
+      "avoid_channels": ["black_card"]
+    },
+    {
+      "id": "coding",
+      "art_ref": "04-coding",
+      "name": "编程开发",
+      "tagline": "用 AI 写代码：Cursor / Copilot / Claude 桌面 / vibecoding",
+      "intensity": "medium_heavy",
+      "monthly_usage": {
+        "primary_model": "claude_sonnet_4_6",
+        "by_model": {
+          "claude_sonnet_4_6": {
+            "input": 20000000,
+            "cached_input": 0,
+            "output": 1000000,
+            "cache_read": 1000000000,
+            "cache_write_5m": 5000000,
+            "cache_write_1h": 0
+          }
+        }
+      },
+      "baseline_ref": null,
+      "baseline_note": "介于 Plus profile 和 code_heavy profile 之间",
+      "recommended_plans": ["claude_max_5x"],
+      "avoid_channels": ["pool_sharing", "black_card"]
+    },
+    {
+      "id": "ai_heavy",
+      "art_ref": "05-heavy",
+      "name": "AI 重度依赖",
+      "tagline": "全天挂 Claude Code 干活，Max 20x 都嫌不够",
+      "intensity": "heavy",
+      "monthly_usage": {
+        "primary_model": "claude_sonnet_4_6",
+        "by_model": {
+          "claude_sonnet_4_6": {
+            "input": 1100000000,
+            "cached_input": 0,
+            "output": 52300000,
+            "cache_read": 14700000000,
+            "cache_write_5m": 50000000,
+            "cache_write_1h": 0
+          }
+        }
+      },
+      "baseline_ref": "claude_sonnet_code_heavy_8500_usd_profile",
+      "baseline_note": "直接复用 code_heavy profile",
+      "recommended_plans": ["claude_max_20x"],
+      "avoid_channels": ["pool_sharing", "black_card"]
+    },
+    {
+      "id": "api_integration",
+      "art_ref": "06-api",
+      "name": "API 集成开发",
+      "tagline": "自己接 API 做产品 / agent / 自动化",
+      "intensity": "variable",
+      "monthly_usage": {
+        "primary_model": null,
+        "by_model": {},
+        "_note": "无默认用量，选中此卡后建议直接进入 Flow B 自定义"
+      },
+      "baseline_ref": null,
+      "baseline_note": "用量随项目波动，无统一画像",
+      "recommended_plans": ["official_api"],
+      "avoid_channels": ["black_card"]
+    }
+  ]
+}
