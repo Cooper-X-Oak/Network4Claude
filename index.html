@@ -45,19 +45,19 @@
       font-size: 16px;
       line-height: 1.55;
       letter-spacing: 0.01em;
-      overflow: hidden;       /* keep the entry page as a one-screen composition */
+      overflow: auto;
     }
 
     a { color: inherit; text-decoration: none; }
 
     .page {
-      height: 100vh;
+      min-height: 100vh;
       max-width: 1180px;
       margin: 0 auto;
-      padding: 14px 22px 10px;
+      padding: var(--space-4) var(--space-5) var(--space-4);
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: var(--space-5);
     }
 
     .workbench {
@@ -65,7 +65,7 @@
       min-height: 0;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: var(--space-8);
     }
 
     /* ───── masthead ───── */
@@ -88,7 +88,7 @@
       color: var(--color-ink);
       letter-spacing: -0.01em;
     }
-    .brand-mark { color: var(--color-accent); }
+    .brand-mark { color: inherit; }
 
     .masthead-right {
       display: flex;
@@ -109,42 +109,18 @@
 
     .stage {
       flex: 1 1 auto;
-      position: relative;
       min-height: 0;
       display: flex;
-      align-items: center;
-    }
-
-    .stage-hero, .stage-snapshot {
-      position: absolute;
-      inset: 0;
-      display: flex;
       flex-direction: column;
-      justify-content: center;
-      will-change: opacity, transform, filter;
-      transition:
-        opacity 480ms var(--ease-smooth),
-        transform 600ms var(--ease-out),
-        filter 360ms var(--ease-smooth);
-    }
-
-    .stage[data-mode="hero"] .stage-snapshot {
-      opacity: 0;
-      transform: scale(0.96) translateY(24px);
-      filter: blur(8px);
-      pointer-events: none;
-    }
-    .stage[data-mode="snapshot"] .stage-hero {
-      opacity: 0;
-      transform: scale(1.04) translateY(-24px);
-      filter: blur(8px);
-      pointer-events: none;
+      gap: var(--space-7);
+      align-items: stretch;
     }
 
     /* ───── hero ───── */
 
     .stage-hero {
       max-width: 760px;
+      position: static;
     }
 
     .stage-hero h1 {
@@ -179,21 +155,29 @@
     /* ───── snapshot layout ───── */
 
     .stage-snapshot {
+      position: static;
       width: 100%;
-      height: 100%;
-      gap: 6px;
-      justify-content: flex-start;
-      padding-top: 4px;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-5);
+      align-items: flex-start;
     }
 
-    .snapshot-head { flex: 0 0 auto; }
+    .snapshot-head,
+    .snapshot-figure,
+    .snapshot-conclusion,
+    .radar-totals,
+    .snapshot-workbench {
+      width: 100%;
+      max-width: var(--w-prose);
+    }
 
     .snapshot-eyebrow {
-      margin: 0 0 2px;
+      margin: 0 0 var(--space-1);
       font-family: var(--font-serif);
-      font-size: 11px;
+      font-size: 13px;
       font-weight: 500;
-      letter-spacing: 0.18em;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
       color: var(--color-ink-3);
     }
@@ -209,53 +193,37 @@
     }
 
     .profile-tagline {
-      max-width: 580px;
-      margin: 2px 0 0;
+      max-width: 65ch;
+      margin: var(--space-2) 0 0;
       font-family: var(--font-serif);
-      font-size: clamp(12px, 1.15vw, 14px);
+      font-size: 20px;
       font-style: italic;
-      line-height: 1.3;
+      line-height: 1.6;
       color: var(--color-ink-2);
     }
 
-    .snapshot-grid {
-      flex: 1 1 auto;
-      display: grid;
-      grid-template-columns: minmax(0, 210px) minmax(0, 340px) minmax(0, 1fr);
-      gap: 14px;
-      align-items: start;
-      min-height: 0;
-    }
-
-    /* CRITICAL: grid items default to min-width: auto (= min-content),
-       which makes the SVG's intrinsic viewBox push the cell wider than
-       grid-template-columns allows. min-width: 0 fixes that. */
-    .snapshot-chart {
-      max-width: 210px;
-      min-width: 0;
-      overflow: hidden;
-    }
-    .snapshot-controls,
-    .snapshot-prices {
-      min-width: 0;
-      overflow: hidden;
+    .snapshot-figure {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--space-4);
     }
 
     .panel-cap {
-      margin: 0 0 4px;
+      margin: 0;
       font-family: var(--font-serif);
-      font-size: 12px;
-      letter-spacing: 0.18em;
+      font-size: 13px;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
       color: var(--color-ink-3);
     }
 
     /* radar */
 
-    #radarMount { width: 100%; max-width: 172px; }
+    #radarMount { width: 100%; max-width: 280px; }
     .radar {
       width: 100%;
-      max-width: 172px;
+      max-width: 280px;
       height: auto;
       aspect-ratio: 1 / 1;
       display: block;
@@ -287,54 +255,77 @@
       fill: var(--color-ink-2);
     }
 
-    .radar-totals {
-      margin: 6px 0 0;
-      font-size: 10px;
-      line-height: 1.35;
-      color: var(--color-ink-3);
+    .snapshot-conclusion {
+      margin: 0;
+      font-size: 18px;
+      line-height: 1.7;
+      color: var(--color-ink);
     }
 
-    /* controls */
+    .radar-totals {
+      margin: 0;
+      font-size: 16px;
+      line-height: 1.65;
+      color: var(--color-ink-2);
+    }
 
-    .snapshot-controls {
-      display: flex;
-      flex-direction: column;
-      min-height: 0;
+    .snapshot-workbench {
+      border: 0;
+    }
+
+    .snapshot-workbench summary {
+      cursor: pointer;
+      color: var(--color-ink);
+      text-decoration: underline;
+      text-decoration-color: var(--color-accent);
+      text-underline-offset: 3px;
+      text-decoration-thickness: 2px;
+      list-style: none;
+    }
+
+    .snapshot-workbench summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .snapshot-workbench[open] .workbench-details {
+      margin-top: var(--space-5);
+      padding-left: var(--space-5);
     }
 
     .controls-card {
-      border: 1px solid var(--color-border);
-      border-radius: 16px;
-      background:
-        linear-gradient(180deg, rgba(240, 235, 224, 0.96), rgba(232, 225, 211, 0.86));
-      box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.35),
-        0 8px 24px rgba(95, 77, 58, 0.05);
-      padding: 8px;
+      width: 100%;
+      max-width: var(--w-wide);
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 0;
+    }
+
+    .control-topline,
+    .control-section,
+    .snapshot-prices {
+      padding-top: var(--space-4);
+      border-top: 1px solid var(--color-border);
     }
 
     .control-topline {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) 148px;
-      gap: 8px;
-      align-items: end;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+      align-items: flex-start;
     }
 
     .control-metric {
-      padding: 7px 8px;
-      border: 1px solid rgba(212, 204, 184, 0.8);
-      border-radius: 12px;
-      background: rgba(250, 249, 245, 0.55);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+      padding: 0;
     }
 
     .control-label {
       display: block;
       margin: 0;
       font-family: var(--font-serif);
-      font-size: 10px;
+      font-size: 13px;
       letter-spacing: 0.14em;
       text-transform: uppercase;
       color: var(--color-ink-3);
@@ -342,11 +333,11 @@
 
     .control-baseline {
       display: block;
-      margin-top: 4px;
+      margin-top: 0;
       font-family: var(--font-mono);
-      font-size: 18px;
+      font-size: 16px;
       font-weight: 500;
-      line-height: 1;
+      line-height: 1.5;
       color: var(--color-ink);
     }
 
@@ -355,159 +346,157 @@
     .control-inline-note,
     .control-lock {
       display: block;
-      margin-top: 3px;
-      font-size: 9px;
-      line-height: 1.3;
-      color: var(--color-ink-3);
+      margin-top: 0;
+      font-size: 16px;
+      line-height: 1.6;
+      color: var(--color-ink-2);
     }
 
     .control-tabs {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 4px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--space-2);
     }
 
     .control-tab {
-      padding: 7px 4px;
-      border: 1px solid var(--color-border-strong);
-      border-radius: 999px;
-      background: rgba(250, 249, 245, 0.5);
+      padding: 0;
+      border: 0;
+      background: transparent;
       color: var(--color-ink-2);
-      font-family: var(--font-serif);
-      font-size: 12px;
-      line-height: 1;
+      font-family: var(--font-sans);
+      font-size: 16px;
+      line-height: 1.6;
       cursor: pointer;
-      transition:
-        background 180ms var(--ease-smooth),
-        border-color 180ms var(--ease-smooth),
-        color 180ms var(--ease-smooth);
+      text-decoration: underline;
+      text-decoration-color: transparent;
+      text-decoration-thickness: 2px;
+      text-underline-offset: 3px;
+      transition: color 180ms var(--ease-smooth), text-decoration-color 180ms var(--ease-smooth);
+    }
+
+    .control-tab + .control-tab::before {
+      content: "·";
+      color: var(--color-ink-3);
+      margin-right: var(--space-2);
     }
 
     .control-tab.is-active {
-      background: var(--color-accent);
-      border-color: var(--color-accent-strong);
-      color: #fffaf4;
-    }
-
-    .control-duo {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 6px;
+      color: var(--color-ink);
+      text-decoration-color: var(--color-accent);
     }
 
     .control-section {
-      padding: 6px 8px;
-      border: 1px solid rgba(212, 204, 184, 0.8);
-      border-radius: 12px;
-      background: rgba(250, 249, 245, 0.45);
+      width: 100%;
     }
 
     .control-section-head {
       display: flex;
       justify-content: space-between;
-      align-items: baseline;
-      gap: 8px;
-      margin-bottom: 6px;
+      align-items: flex-end;
+      gap: var(--space-4);
+      margin-bottom: var(--space-4);
+      flex-wrap: wrap;
     }
 
     .control-field {
       display: flex;
       flex-direction: column;
-      gap: 2px;
+      gap: var(--space-2);
     }
 
     .parameter-grid,
     .advanced-grid {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 4px 6px;
+      gap: var(--space-4);
     }
 
     .control-input-row {
       display: grid;
       grid-template-columns: minmax(0, 1fr) auto;
-      gap: 4px;
+      gap: var(--space-2);
       align-items: center;
     }
 
     .control-input {
       width: 100%;
       min-width: 0;
-      padding: 5px 6px;
-      border: 1px solid var(--color-border-strong);
-      border-radius: 10px;
-      background: rgba(250, 249, 245, 0.85);
+      padding: var(--space-2) 0;
+      border: 0;
+      border-bottom: 1px solid var(--color-border-strong);
+      border-radius: var(--radius-0);
+      background: transparent;
       color: var(--color-ink);
       font-family: var(--font-mono);
-      font-size: 12px;
+      font-size: 16px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .control-input:focus {
+      outline: 2px solid var(--color-accent);
+      outline-offset: 0;
     }
 
     .control-suffix {
       font-family: var(--font-mono);
-      font-size: 9px;
+      font-size: 13px;
       color: var(--color-ink-3);
       white-space: nowrap;
     }
 
     .control-input:disabled {
-      background: rgba(232, 225, 211, 0.55);
       color: var(--color-ink-3);
       cursor: not-allowed;
     }
 
-    .usage-grid,
     .price-chip-grid {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 6px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: var(--space-3) var(--space-5);
     }
 
-    .price-chip-grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    .usage-cell,
     .price-chip {
-      padding: 5px 6px;
-      border: 1px solid rgba(212, 204, 184, 0.78);
-      border-radius: 10px;
-      background: rgba(248, 246, 239, 0.8);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-1);
+      padding-bottom: var(--space-2);
+      border-bottom: 1px solid var(--color-border);
     }
 
-    .usage-k,
     .chip-k {
       display: block;
-      font-size: 9px;
-      line-height: 1.2;
+      font-size: 13px;
+      line-height: 1.5;
       color: var(--color-ink-3);
       text-transform: uppercase;
-      letter-spacing: 0.1em;
+      letter-spacing: 0.08em;
     }
 
-    .usage-v,
     .chip-v {
       display: block;
-      margin-top: 2px;
       font-family: var(--font-mono);
-      font-size: 11px;
-      line-height: 1.15;
+      font-size: 16px;
+      line-height: 1.5;
       color: var(--color-ink);
-    }
-
-    .chip-v {
-      font-size: 10px;
+      font-variant-numeric: tabular-nums;
     }
 
     .control-advanced {
-      margin-top: 6px;
-      padding-top: 6px;
-      border-top: 1px dashed rgba(212, 204, 184, 0.85);
+      margin-top: var(--space-4);
+      padding-top: var(--space-4);
+      border-top: 1px solid var(--color-border);
     }
 
     .control-advanced summary {
       cursor: pointer;
-      font-size: 10px;
-      color: var(--color-ink-2);
+      font-size: 16px;
+      line-height: 1.6;
+      color: var(--color-ink);
+      text-decoration: underline;
+      text-decoration-color: var(--color-accent);
+      text-decoration-thickness: 2px;
+      text-underline-offset: 3px;
       user-select: none;
       list-style: none;
     }
@@ -521,15 +510,8 @@
     }
 
     .effective-grid {
-      margin-top: 6px;
+      margin-top: 0;
       grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-
-    .control-summary {
-      margin-top: 6px;
-      font-size: 9px;
-      line-height: 1.35;
-      color: var(--color-ink-3);
     }
 
     /* prices */
@@ -537,73 +519,52 @@
     .snapshot-prices { display: flex; flex-direction: column; min-height: 0; }
 
     .price-table {
+      margin-top: var(--space-4);
       width: 100%;
       border-collapse: collapse;
       table-layout: fixed;
-      border-top: 1px solid var(--color-border);
     }
 
     .price-head th {
-      padding: 0 0 7px;
-      border-bottom: 1px solid var(--color-border);
+      padding: 0 0 var(--space-3);
+      border-bottom: 1px solid var(--color-border-strong);
       text-align: left;
-      font-family: var(--font-serif);
-      font-size: 10px;
+      font-family: var(--font-sans);
+      font-size: 13px;
       font-weight: 500;
-      letter-spacing: 0.14em;
+      letter-spacing: 0.06em;
       text-transform: uppercase;
       color: var(--color-ink-3);
     }
 
-    .price-head th:nth-child(1) { width: 24%; }
-    .price-head th:nth-child(2) { width: 30%; }
-    .price-head th:nth-child(3) { width: 22%; text-align: right; }
-    .price-head th:nth-child(4) { width: 24%; text-align: right; }
+    .price-head th:nth-child(1) { width: 18%; }
+    .price-head th:nth-child(2) { width: 42%; }
+    .price-head th:nth-child(3) { width: 20%; text-align: right; }
+    .price-head th:nth-child(4) { width: 20%; text-align: right; }
 
     .price-tier td {
-      padding: 8px 0;
+      padding: var(--space-4) 0;
       border-bottom: 1px solid var(--color-border);
       vertical-align: top;
-      transition:
-        opacity 380ms var(--ease-smooth),
-        transform 380ms var(--ease-out),
-        filter 320ms var(--ease-smooth);
     }
     .price-tier td:nth-child(3),
     .price-tier td:nth-child(4) {
       text-align: right;
     }
-    .price-tier.is-morphing td {
-      opacity: 0;
-      transform: translateY(6px);
-      filter: blur(3px);
-    }
-    .price-tier.is-baseline td {
-      background: rgba(184, 120, 52, 0.07);
-    }
 
     .tier-rank {
-      font-family: var(--font-serif);
-      font-size: 12px;
-      letter-spacing: 0.08em;
-      color: var(--color-ink-3);
-    }
-
-    .tier-source {
-      display: block;
-      font-family: var(--font-serif);
-      font-size: 15px;
-      font-weight: 500;
-      line-height: 1.25;
+      font-family: var(--font-sans);
+      font-size: 16px;
+      line-height: 1.6;
       color: var(--color-ink);
     }
 
-    .tier-note {
+    .tier-summary {
       display: block;
-      margin-top: 2px;
       font-family: var(--font-sans);
-      font-size: 10px;
-      color: var(--color-ink-3);
+      font-size: 16px;
+      line-height: 1.6;
+      color: var(--color-ink-2);
     }
 
     .tier-amount,
@@ -619,22 +580,23 @@
     }
 
     .price-baseline {
-      margin: 6px 0 0;
-      font-size: 11px;
-      line-height: 1.45;
-      color: var(--color-ink-3);
+      margin: var(--space-4) 0 0;
+      font-size: 16px;
+      line-height: 1.6;
+      color: var(--color-ink-2);
     }
 
     /* ───── personas (with magnetic hover + focus dim) ───── */
 
     .personas-section {
       flex: 0 0 auto;
+      max-width: var(--w-wide);
     }
 
     .persona-row {
-      display: grid;
-      grid-template-columns: repeat(6, minmax(0, 1fr));
-      gap: 10px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-5);
     }
 
     .persona-card {
@@ -642,52 +604,39 @@
       display: flex;
       flex-direction: column;
       align-items: flex-start;
-      gap: 4px;
-      padding: 12px 12px;
+      gap: var(--space-2);
+      padding: var(--space-5);
       border: 1px solid var(--color-border);
-      border-radius: 12px;
+      border-radius: var(--radius-3);
       background: transparent;
       color: var(--color-ink);
       text-align: left;
       cursor: pointer;
       font: inherit;
-      will-change: transform, opacity, filter;
-      transition:
-        transform 380ms var(--ease-spring),
-        border-color 240ms var(--ease-out),
-        background 240ms var(--ease-out),
-        opacity 280ms var(--ease-smooth),
-        filter 280ms var(--ease-smooth);
+      flex: 1 1 150px;
+      min-width: 150px;
+      max-width: 180px;
+      transition: border-color 240ms var(--ease-out), opacity 240ms var(--ease-smooth);
     }
 
     .persona-card:hover {
-      transform: translateY(-4px) scale(1.035);
-      border-color: var(--color-ink);
-      background: var(--color-surface);
-      z-index: 2;
+      border-color: var(--color-border-strong);
     }
 
-    /* focus mode: when ANY card is hovered, the others blur + dim */
     .persona-row.is-focusing .persona-card:not(:hover):not(.is-selected) {
-      opacity: 0.42;
-      filter: blur(1px);
-      transform: scale(0.985);
+      opacity: 0.55;
     }
 
     .persona-card.is-selected {
-      border-color: var(--color-ink);
-      background: var(--color-surface);
+      border-color: var(--color-border-strong);
     }
 
     .persona-num {
-      font-family: var(--font-serif);
-      font-size: 12px;
+      font-family: var(--font-sans);
+      font-size: 13px;
       color: var(--color-ink-3);
       letter-spacing: 0.06em;
-      transition: color 240ms var(--ease-out);
     }
-    .persona-card.is-selected .persona-num,
-    .persona-card:hover .persona-num { color: var(--color-accent); }
 
     .persona-name {
       font-family: var(--font-serif);
@@ -698,9 +647,13 @@
     }
 
     .persona-blurb {
-      font-size: 11px;
-      line-height: 1.35;
+      font-size: 13px;
+      line-height: 1.5;
       color: var(--color-ink-2);
+    }
+
+    .persona-card.is-selected .persona-name {
+      font-weight: 600;
     }
 
     /* ───── footer ───── */
@@ -748,32 +701,27 @@
     /* ───── responsive fallback ───── */
 
     @media (max-width: 760px) {
-      body { overflow: auto; }
-      .page { height: auto; min-height: 100vh; }
-      .stage { min-height: 360px; }
-      .persona-row { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
-      .snapshot-grid {
-        grid-template-columns: 1fr;
-        gap: 24px;
+      .page { padding: var(--space-4); }
+      .parameter-grid,
+      .advanced-grid,
+      .price-chip-grid,
+      .effective-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .snapshot-workbench[open] .workbench-details {
+        padding-left: 0;
       }
     }
 
     @media (max-height: 640px) and (max-width: 1100px) {
-      body { overflow: auto; }
-      .page { height: auto; min-height: 100vh; }
-      .stage { min-height: 360px; }
-      .persona-row { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
-      .snapshot-grid {
-        grid-template-columns: 1fr;
-        gap: 24px;
-      }
+      .page { min-height: 100vh; }
     }
 
     /* ───── reduced motion ───── */
 
     @media (prefers-reduced-motion: reduce) {
       .stage-hero, .stage-snapshot, .persona-card,
-      .price-tier, .radar-dot, .masthead-link, .colophon a {
+      .radar-dot, .masthead-link, .colophon a {
         transition: opacity 200ms linear !important;
         transform: none !important;
         filter: none !important;
@@ -787,152 +735,154 @@
     <header class="masthead">
       <span class="brand">Network<span class="brand-mark">4</span>Claude</span>
       <span class="masthead-right">
-        <a class="masthead-link" href="#workbench">完整工作台</a>
         <span class="masthead-meta">更新于 2026-05-12</span>
       </span>
     </header>
 
     <main class="workbench" id="workbench" aria-label="完整工作台">
-      <div class="stage" id="stage" data-mode="hero">
+      <div class="stage" id="stage" data-mode="snapshot">
 
-      <section class="stage-hero" id="stageHero" aria-label="开场">
-        <h1>你在为 <span class="ink-accent">AI</span> 付多少钱？</h1>
-        <p class="lede">一张暖色调的价格地图——选一个最像你的，看见同一画像下不同渠道的价格分布。我们不告诉你该选哪个，只让你看见你在地图上的位置。</p>
-      </section>
+        <section class="stage-hero" id="stageHero" aria-label="开场">
+          <h1>你在为 <span class="ink-accent">AI</span> 付多少钱？</h1>
+          <p class="lede">一张暖色调的价格地图——选一个最像你的，看见同一画像下不同渠道的价格分布。我们不告诉你该选哪个，只让你看见你在地图上的位置。</p>
+        </section>
 
-      <section class="stage-snapshot" id="stageSnapshot" aria-label="当前画像" aria-live="polite">
-        <header class="snapshot-head">
-          <p class="snapshot-eyebrow">这一类画像</p>
-          <h2 class="profile-name" id="profileName">—</h2>
-          <p class="profile-tagline" id="profileTagline">—</p>
-        </header>
+        <section class="personas-section" aria-label="使用画像">
+          <div class="persona-row" id="personaRow" role="radiogroup" aria-label="使用画像"></div>
+        </section>
 
-        <div class="snapshot-grid">
-          <div class="snapshot-chart">
+        <section class="stage-snapshot" id="stageSnapshot" aria-label="当前画像" aria-live="polite">
+          <header class="snapshot-head">
+            <p class="snapshot-eyebrow">这一类画像</p>
+            <h2 class="profile-name" id="profileName">—</h2>
+            <p class="profile-tagline" id="profileTagline">—</p>
+          </header>
+
+          <div class="snapshot-figure">
             <p class="panel-cap">用量分级雷达</p>
             <div id="radarMount"></div>
-            <p class="radar-totals" id="radarTotals">—</p>
           </div>
-          <div class="snapshot-controls">
-            <p class="panel-cap">分项参数</p>
-            <div class="controls-card">
-              <div class="control-topline">
-                <div class="control-metric">
-                  <span class="control-label">上游 API 等价</span>
-                  <strong class="control-baseline" id="baselineUsd">$0 / 月</strong>
-                  <span class="control-subline" id="baselineOfficial">官方 API 直购约 ¥0 / 月</span>
-                </div>
-                <div class="control-tabs" role="tablist" aria-label="渠道参数类型">
-                  <button class="control-tab" id="tabOfficial" type="button" data-channel-tab="official" role="tab" aria-selected="false">官方</button>
-                  <button class="control-tab is-active" id="tabRegular" type="button" data-channel-tab="regular" role="tab" aria-selected="true">中转</button>
-                  <button class="control-tab" id="tabCustom" type="button" data-channel-tab="custom" role="tab" aria-selected="false">自己调</button>
-                </div>
-              </div>
-              <div class="control-duo">
-                <section class="control-section" aria-label="月用量拆分">
-                  <div class="control-section-head">
-                    <span class="control-label">用量拆分</span>
-                    <span class="control-inline-note" id="usageModelLabel">按当前主模型</span>
+
+          <p class="snapshot-conclusion" id="snapshotConclusion">—</p>
+          <p class="radar-totals" id="radarTotals">—</p>
+
+          <details class="snapshot-workbench" id="snapshotWorkbench">
+            <summary>展开看分项参数与各渠道对照 →</summary>
+            <div class="workbench-details">
+              <div class="controls-card">
+                <section class="control-topline" aria-label="上游 API 等价">
+                  <div class="control-metric">
+                    <span class="control-label">上游 API 等价</span>
+                    <strong class="control-baseline" id="baselineUsd">$0 / 月</strong>
+                    <span class="control-subline" id="baselineOfficial">官方 API 直购约 ¥0 / 月</span>
                   </div>
-                  <div class="usage-grid" id="usageGrid"></div>
                 </section>
+
+                <section class="control-section" aria-label="渠道参数编辑器">
+                  <div class="control-section-head">
+                    <span class="control-label" id="channelEditorLabel">官方类型</span>
+                    <div class="control-tabs" role="tablist" aria-label="渠道参数类型">
+                      <button class="control-tab" id="tabOfficial" type="button" data-channel-tab="official" role="tab" aria-selected="false">官方</button>
+                      <button class="control-tab is-active" id="tabRegular" type="button" data-channel-tab="regular" role="tab" aria-selected="true">中转</button>
+                      <button class="control-tab" id="tabCustom" type="button" data-channel-tab="custom" role="tab" aria-selected="false">自己调</button>
+                    </div>
+                  </div>
+                  <p class="control-inline-note" id="channelEditorHint">只展示核心参数</p>
+                  <div class="parameter-grid">
+                    <label class="control-field">
+                      <span class="control-label">结算</span>
+                      <div class="control-input-row">
+                        <input class="control-input" id="settlementRateInput" type="number" min="0.1" max="999" step="0.1" inputmode="decimal" />
+                        <span class="control-suffix">¥/$1</span>
+                      </div>
+                    </label>
+                    <label class="control-field">
+                      <span class="control-label">输入</span>
+                      <div class="control-input-row">
+                        <input class="control-input" id="inputMultiplierInput" type="number" min="0.1" max="999" step="0.1" inputmode="decimal" />
+                        <span class="control-suffix">x</span>
+                      </div>
+                    </label>
+                    <label class="control-field">
+                      <span class="control-label">输出</span>
+                      <div class="control-input-row">
+                        <input class="control-input" id="outputMultiplierInput" type="number" min="0.1" max="999" step="0.1" inputmode="decimal" />
+                        <span class="control-suffix">x</span>
+                      </div>
+                    </label>
+                    <label class="control-field">
+                      <span class="control-label">缓存</span>
+                      <div class="control-input-row">
+                        <input class="control-input" id="cacheMultiplierInput" type="number" min="0.1" max="999" step="0.1" inputmode="decimal" />
+                        <span class="control-suffix">x</span>
+                      </div>
+                    </label>
+                  </div>
+                  <details class="control-advanced" id="advancedControls">
+                    <summary>展开看高级缓存参数 →</summary>
+                    <div class="advanced-grid">
+                      <label class="control-field">
+                        <span class="control-label">读</span>
+                        <div class="control-input-row">
+                          <input class="control-input" id="cacheReadMultiplierInput" type="number" min="0.1" max="999" step="0.1" inputmode="decimal" />
+                          <span class="control-suffix">x</span>
+                        </div>
+                      </label>
+                      <label class="control-field">
+                        <span class="control-label">写 5m</span>
+                        <div class="control-input-row">
+                          <input class="control-input" id="cacheWrite5mMultiplierInput" type="number" min="0.1" max="999" step="0.1" inputmode="decimal" />
+                          <span class="control-suffix">x</span>
+                        </div>
+                      </label>
+                      <label class="control-field">
+                        <span class="control-label">写 1h</span>
+                        <div class="control-input-row">
+                          <input class="control-input" id="cacheWrite1hMultiplierInput" type="number" min="0.1" max="999" step="0.1" inputmode="decimal" />
+                          <span class="control-suffix">x</span>
+                        </div>
+                      </label>
+                    </div>
+                  </details>
+                </section>
+
                 <section class="control-section" aria-label="官方价格基线">
                   <div class="control-section-head">
-                    <span class="control-label">官方价格</span>
+                    <span class="control-label">官方价格基线</span>
                     <span class="control-inline-note" id="officialPriceLabel">USD / 1M token</span>
                   </div>
                   <div class="price-chip-grid" id="officialPriceGrid"></div>
                 </section>
-              </div>
-              <section class="control-section" aria-label="渠道参数编辑器">
-                <div class="control-section-head">
-                  <span class="control-label" id="channelEditorLabel">官方类型</span>
-                  <span class="control-inline-note" id="channelEditorHint">只展示核心参数</span>
-                </div>
-                <div class="parameter-grid">
-                  <label class="control-field">
-                    <span class="control-label">结算</span>
-                    <div class="control-input-row">
-                      <input class="control-input" id="settlementRateInput" type="number" min="0.1" max="999" step="0.1" inputmode="decimal" />
-                      <span class="control-suffix">¥/$1</span>
-                    </div>
-                  </label>
-                  <label class="control-field">
-                    <span class="control-label">输入</span>
-                    <div class="control-input-row">
-                      <input class="control-input" id="inputMultiplierInput" type="number" min="0.1" max="999" step="0.1" inputmode="decimal" />
-                      <span class="control-suffix">x</span>
-                    </div>
-                  </label>
-                  <label class="control-field">
-                    <span class="control-label">输出</span>
-                    <div class="control-input-row">
-                      <input class="control-input" id="outputMultiplierInput" type="number" min="0.1" max="999" step="0.1" inputmode="decimal" />
-                      <span class="control-suffix">x</span>
-                    </div>
-                  </label>
-                  <label class="control-field">
-                    <span class="control-label">缓存</span>
-                    <div class="control-input-row">
-                      <input class="control-input" id="cacheMultiplierInput" type="number" min="0.1" max="999" step="0.1" inputmode="decimal" />
-                      <span class="control-suffix">x</span>
-                    </div>
-                  </label>
-                </div>
-                <details class="control-advanced" id="advancedControls">
-                  <summary>高级缓存参数</summary>
-                  <div class="advanced-grid">
-                    <label class="control-field">
-                      <span class="control-label">读</span>
-                      <div class="control-input-row">
-                        <input class="control-input" id="cacheReadMultiplierInput" type="number" min="0.1" max="999" step="0.1" inputmode="decimal" />
-                        <span class="control-suffix">x</span>
-                      </div>
-                    </label>
-                    <label class="control-field">
-                      <span class="control-label">写 5m</span>
-                      <div class="control-input-row">
-                        <input class="control-input" id="cacheWrite5mMultiplierInput" type="number" min="0.1" max="999" step="0.1" inputmode="decimal" />
-                        <span class="control-suffix">x</span>
-                      </div>
-                    </label>
-                    <label class="control-field">
-                      <span class="control-label">写 1h</span>
-                      <div class="control-input-row">
-                        <input class="control-input" id="cacheWrite1hMultiplierInput" type="number" min="0.1" max="999" step="0.1" inputmode="decimal" />
-                        <span class="control-suffix">x</span>
-                      </div>
-                    </label>
+
+                <section class="control-section" aria-label="当前渠道折算">
+                  <div class="control-section-head">
+                    <span class="control-label">当前渠道折算</span>
+                    <span class="control-inline-note">按当前标签下的倍率换算</span>
                   </div>
-                </details>
-                <div class="price-chip-grid effective-grid" id="effectivePriceGrid"></div>
-                <div class="control-summary" id="channelSummary">—</div>
-              </section>
+                  <div class="price-chip-grid effective-grid" id="effectivePriceGrid"></div>
+                </section>
+
+                <section class="snapshot-prices" aria-label="月度实付对照">
+                  <p class="panel-cap">月度实付对照</p>
+                  <table class="price-table" aria-label="月度实付对照表">
+                    <thead class="price-head">
+                      <tr>
+                        <th scope="col">渠道</th>
+                        <th scope="col">参数</th>
+                        <th scope="col">实付 / 月</th>
+                        <th scope="col">放大倍率</th>
+                      </tr>
+                    </thead>
+                    <tbody id="priceList"></tbody>
+                  </table>
+                  <p class="price-baseline" id="priceBaseline">—</p>
+                </section>
+              </div>
             </div>
-          </div>
-          <div class="snapshot-prices">
-            <p class="panel-cap">月度实付对照</p>
-            <table class="price-table" aria-label="月度实付对照表">
-              <thead class="price-head">
-                <tr>
-                  <th scope="col">渠道</th>
-                  <th scope="col">参数</th>
-                  <th scope="col">实付 / 月</th>
-                  <th scope="col">放大倍率</th>
-                </tr>
-              </thead>
-              <tbody id="priceList"></tbody>
-            </table>
-            <p class="price-baseline" id="priceBaseline">—</p>
-          </div>
-        </div>
-      </section>
+          </details>
+        </section>
 
       </div>
-
-      <section class="personas-section" aria-label="使用画像">
-      <div class="persona-row" id="personaRow" role="radiogroup" aria-label="使用画像"></div>
-      </section>
     </main>
 
     <footer class="colophon">
@@ -1078,10 +1028,10 @@
         return "无固定用量画像——这一类用户按项目波动。";
       }
 
-      let summary = `交互总量 ${fmtTokens(interactionTotal)} token：input ${fmtTokens(usage.input)} · output ${fmtTokens(usage.output)}。`;
+      let summary = `交互总量约 ${fmtTokens(interactionTotal)} token；其中输入约 ${fmtTokens(usage.input)}，输出约 ${fmtTokens(usage.output)}。`;
       if (cacheTotal > 0) {
-        summary += ` 缓存强度：读 ${fmtTokens(usage.cacheRead)}`;
-        if (usage.cacheWrite > 0) summary += ` · 写 ${fmtTokens(usage.cacheWrite)}`;
+        summary += ` 缓存强度显示为读取约 ${fmtTokens(usage.cacheRead)}`;
+        if (usage.cacheWrite > 0) summary += `，写入约 ${fmtTokens(usage.cacheWrite)}`;
         summary += "。";
       }
       return summary;
@@ -1169,6 +1119,7 @@
 
       usage.cacheWrite = usage.cacheWrite5m + usage.cacheWrite1h;
       usage.cacheTotal = usage.cacheRead + usage.cacheWrite;
+      usage.interactionTotal = usage.input + usage.output;
       const totalUsd = officialUsd.input + officialUsd.output + officialUsd.cacheRead + officialUsd.cacheWrite5m + officialUsd.cacheWrite1h;
 
       return {
@@ -1196,13 +1147,42 @@
       return { partsUsd, usdEquivalent, cny };
     }
 
-    function buildChannelNote(config) {
+    function formatCompactSettlementRate(value) {
+      if (!Number.isFinite(value) || value <= 0) return "—";
+      return `¥${Number(value).toLocaleString("zh-CN", { maximumFractionDigits: 1 })}/$1`;
+    }
+
+    function isSameChannelConfig(a, b) {
+      if (!a || !b) return false;
       return [
-        formatSettlementRate(config.settlementRate),
-        `入 ${formatMultiplier(config.inputMultiplier)}`,
-        `出 ${formatMultiplier(config.outputMultiplier)}`,
-        `缓存 ${formatMultiplier(config.cacheMultiplier)}`,
-      ].join(" · ");
+        "settlementRate",
+        "inputMultiplier",
+        "outputMultiplier",
+        "cacheMultiplier",
+        "cacheReadMultiplier",
+        "cacheWrite5mMultiplier",
+        "cacheWrite1hMultiplier",
+      ].every(key => Number(a[key]) === Number(b[key]));
+    }
+
+    function buildTierSentence(id, config, regularConfig = null) {
+      if (id === "official") {
+        return "官方直购，按文档原价结算。";
+      }
+      if (id === "regular") {
+        return `折算 ${formatCompactSettlementRate(config.settlementRate)}，输入与输出按文档基线 ${formatMultiplier(config.inputMultiplier)}、${formatMultiplier(config.outputMultiplier)}，缓存按 ${formatMultiplier(config.cacheMultiplier)}。`;
+      }
+      if (regularConfig && isSameChannelConfig(config, regularConfig)) {
+        return "沿用中转基线，尚未自定义。";
+      }
+      return `按自定义参数折算为 ${formatCompactSettlementRate(config.settlementRate)}，输入 ${formatMultiplier(config.inputMultiplier)}，输出 ${formatMultiplier(config.outputMultiplier)}，缓存读 ${formatMultiplier(config.cacheReadMultiplier)}，缓存写入 5m 与 1h 分别按 ${formatMultiplier(config.cacheWrite5mMultiplier)}、${formatMultiplier(config.cacheWrite1hMultiplier)}。`;
+    }
+
+    function buildSnapshotConclusion(personaName, usage, officialCny, regularTier) {
+      if (!regularTier || !Number.isFinite(officialCny) || officialCny <= 0) {
+        return `「${personaName}」这一类画像暂时没有可折算的默认月度价格。`;
+      }
+      return `「${personaName}」这一类画像每月约交互 ${fmtTokens(usage.interactionTotal)} token，官方 API 直购约 ${fmtCny(officialCny)}，正规中转约 ${fmtCny(regularTier.cny)}，相对官方是 ${formatAmplification(regularTier.amplification)} 的购买力放大。`;
     }
 
     function computeTiers(persona, pricing) {
@@ -1215,12 +1195,11 @@
         return {
           id,
           source: config.source,
-          summary: buildChannelNote(config),
-          note: config.editorHint,
+          summary: buildTierSentence(id, config, state.channelConfigs.regular),
           cny: cost.cny,
           amplification: cost.cny > 0 ? officialCny / cost.cny : 0,
         };
-      });
+      }).filter(tier => !(tier.id === "custom" && isSameChannelConfig(state.channelConfigs.custom, state.channelConfigs.regular)));
 
       return {
         profile,
@@ -1364,11 +1343,10 @@
       profileName:    document.getElementById("profileName"),
       profileTagline: document.getElementById("profileTagline"),
       radarMount:     document.getElementById("radarMount"),
+      snapshotConclusion: document.getElementById("snapshotConclusion"),
       radarTotals:    document.getElementById("radarTotals"),
       baselineUsd:    document.getElementById("baselineUsd"),
       baselineOfficial: document.getElementById("baselineOfficial"),
-      usageModelLabel: document.getElementById("usageModelLabel"),
-      usageGrid:      document.getElementById("usageGrid"),
       officialPriceLabel: document.getElementById("officialPriceLabel"),
       officialPriceGrid: document.getElementById("officialPriceGrid"),
       tabOfficial:    document.getElementById("tabOfficial"),
@@ -1385,7 +1363,6 @@
       cacheWrite1hMultiplierInput: document.getElementById("cacheWrite1hMultiplierInput"),
       advancedControls: document.getElementById("advancedControls"),
       effectivePriceGrid: document.getElementById("effectivePriceGrid"),
-      channelSummary: document.getElementById("channelSummary"),
       priceList:      document.getElementById("priceList"),
       priceBaseline:  document.getElementById("priceBaseline"),
       error:          document.getElementById("errorBanner"),
@@ -1396,7 +1373,7 @@
       pricing: null,
       radarConfig: null,
       activeId: null,
-      stageMode: "hero",
+      stageMode: "snapshot",
       activeChannelTab: "regular",
       channelConfigs: cloneChannelConfigs(),
       previousTierCnys: [null, null, null],
@@ -1430,29 +1407,18 @@
 
     function buildPriceTierHtml(t) {
       return `
-        <tr class="price-tier${t.id === "regular" ? " is-baseline" : ""}" data-tier="${t.id}">
+        <tr class="price-tier" data-tier="${t.id}">
           <td class="tier-rank">${t.source}</td>
           <td>
-            <span class="tier-source">${t.summary}</span>
-            <span class="tier-note">${t.note}</span>
+            <span class="tier-summary">${t.summary}</span>
           </td>
           <td>
             <span class="tier-amount" data-cny="${t.cny}">${fmtCny(t.cny)} / 月</span>
           </td>
           <td>
             <span class="tier-multiplier">${formatAmplification(t.amplification)}</span>
-            <span class="tier-note">相对官方 API 的实付放大</span>
           </td>
         </tr>
-      `;
-    }
-
-    function buildUsageCell(label, value) {
-      return `
-        <div class="usage-cell">
-          <span class="usage-k">${label}</span>
-          <span class="usage-v">${value}</span>
-        </div>
       `;
     }
 
@@ -1475,20 +1441,9 @@
       return `¥${Number(value).toLocaleString("zh-CN", { maximumFractionDigits: 1 })}`;
     }
 
-    function renderUsageGrid(profile) {
-      const usage = profile.usage;
-      els.usageGrid.innerHTML = [
-        buildUsageCell("Input", fmtTokens(usage.input)),
-        buildUsageCell("Output", fmtTokens(usage.output)),
-        buildUsageCell("Cache 读", fmtTokens(usage.cacheRead)),
-        buildUsageCell("Cache 写", fmtTokens(usage.cacheWrite)),
-      ].join("");
-    }
-
     function renderOfficialPriceGrid(profile) {
       const primary = profile.primaryModel;
       if (!primary) {
-        els.usageModelLabel.textContent = "当前画像缺少主模型";
         els.officialPriceLabel.textContent = "USD / 1M token";
         els.officialPriceGrid.innerHTML = [
           buildPriceChip("Input", "—"),
@@ -1498,7 +1453,6 @@
         return;
       }
 
-      els.usageModelLabel.textContent = primary.displayName;
       els.officialPriceLabel.textContent = `${primary.displayName} · USD / 1M`;
       els.officialPriceGrid.innerHTML = [
         buildPriceChip("Input", fmtUsdUnit(primary.input)),
@@ -1550,7 +1504,6 @@
           buildPriceChip("输出价", "—"),
           buildPriceChip("缓存价", "—"),
         ].join("");
-        els.channelSummary.textContent = "当前画像缺少主模型价格。";
         return;
       }
       const effectiveInput = primary.input * config.inputMultiplier * config.settlementRate;
@@ -1561,7 +1514,6 @@
         buildPriceChip("输出价", `${fmtCnyUnit(effectiveOutput)} / 1M`),
         buildPriceChip("缓存读", `${fmtCnyUnit(effectiveCache)} / 1M`),
       ].join("");
-      els.channelSummary.textContent = `${config.source}：${buildChannelNote(config)}。`;
     }
 
     function setActiveChannelTab(tabId, { refresh = true } = {}) {
@@ -1574,53 +1526,26 @@
 
     function updatePriceSection(persona, { animate = false } = {}) {
       const { profile, apiUsd, officialCny, tiers } = computeTiers(persona, state.pricing);
+      const regularTier = tiers.find(t => t.id === "regular");
       els.baselineUsd.textContent = apiUsd <= 0 ? "—" : `${fmtUsd(apiUsd)} / 月`;
       els.baselineOfficial.textContent = apiUsd <= 0
         ? "当前画像没有默认月度用量。"
-        : `官方 API 直购约 ${fmtCny(officialCny)} / 月。`;
+        : `按这组默认月度用量折算，官方 API 直购约 ${fmtCny(officialCny)} / 月。`;
       els.priceBaseline.textContent = apiUsd <= 0
         ? "这个画像暂时没有默认月度用量，所以这里只保留参数结构。"
-        : "上方把用量和价格拆开了：先看你用多少，再看各渠道怎么定价。";
+        : "这张表把同一组默认月度用量放到不同渠道参数下折算，方便横向看价格分布。";
+      els.snapshotConclusion.textContent = buildSnapshotConclusion(persona.name, profile.usage, officialCny, regularTier);
 
-      renderUsageGrid(profile);
       renderOfficialPriceGrid(profile);
       syncChannelInputs();
       renderEffectivePriceGrid(profile);
-
-      if (!animate || !els.priceList.children.length) {
-        els.priceList.innerHTML = tiers.map(t => buildPriceTierHtml(t)).join("");
-        state.previousTierCnys = tiers.map(t => t.cny);
-        return;
-      }
-
-      const tierEls = els.priceList.querySelectorAll(".price-tier");
-      tierEls.forEach(el => el.classList.add("is-morphing"));
-      requestAnimationFrame(() => {
-        tiers.forEach((t, i) => {
-          const row = tierEls[i];
-          if (!row) return;
-          row.classList.toggle("is-baseline", t.id === "regular");
-          row.querySelector(".tier-rank").textContent = t.source;
-          row.querySelector(".tier-source").textContent = t.summary;
-          const notes = row.querySelectorAll(".tier-note");
-          notes[0].textContent = t.note;
-          notes[1].textContent = "相对官方 API 的实付放大";
-          row.querySelector(".tier-multiplier").textContent = formatAmplification(t.amplification);
-          const amountEl = row.querySelector(".tier-amount");
-          amountEl.dataset.cny = String(t.cny);
-          const prevCny = state.previousTierCnys[i] ?? t.cny;
-          morphNumber(amountEl, prevCny, t.cny);
-        });
-        state.previousTierCnys = tiers.map(t => t.cny);
-        requestAnimationFrame(() => {
-          tierEls.forEach(el => el.classList.remove("is-morphing"));
-        });
-      });
+      els.priceList.innerHTML = tiers.map(t => buildPriceTierHtml(t)).join("");
+      state.previousTierCnys = tiers.map(t => t.cny);
     }
 
     function refreshActivePricing() {
       const persona = state.personas.find(p => p.id === state.activeId);
-      if (!persona || state.stageMode !== "snapshot") return;
+      if (!persona) return;
       updatePriceSection(persona, { animate: true });
     }
 
@@ -1698,7 +1623,7 @@
       morphRadarTo(newRadarValues);
 
       // 2) text labels (name, tagline, totals, baseline): cross-fade brief
-      const textTargets = [els.profileName, els.profileTagline, els.radarTotals, els.baselineUsd, els.baselineOfficial, els.priceBaseline];
+      const textTargets = [els.profileName, els.profileTagline, els.snapshotConclusion, els.radarTotals, els.baselineUsd, els.baselineOfficial, els.priceBaseline];
       textTargets.forEach(el => {
         el.style.transition = "opacity 220ms var(--ease-smooth), filter 220ms var(--ease-smooth)";
         el.style.opacity = "0";
@@ -1722,15 +1647,6 @@
       return true;
     }
 
-    async function transitionHeroToSnapshot(persona, ticket) {
-      renderSnapshotInitial(persona);
-      els.stage.dataset.mode = "snapshot";
-      state.stageMode = "snapshot";
-      // wait for transition to complete before allowing rapid re-morphs
-      await wait(600);
-      return ticket === state.selectionTicket;
-    }
-
     async function selectPersona(id) {
       const persona = state.personas.find(p => p.id === id);
       if (!persona) return;
@@ -1739,13 +1655,7 @@
       state.activeId = id;
       syncCardStates();
 
-      if (state.stageMode === "hero") {
-        const stillLatest = await transitionHeroToSnapshot(persona, ticket);
-        if (!stillLatest && state.activeId) {
-          const latestPersona = state.personas.find(p => p.id === state.activeId);
-          if (latestPersona) await morphSnapshot(latestPersona, state.selectionTicket);
-        }
-      } else if (!isSame) {
+      if (!isSame) {
         await morphSnapshot(persona, ticket);
       }
     }
@@ -1786,7 +1696,9 @@
         syncChannelInputs();
         bindChannelTabs();
         bindChannelInputs();
+        state.activeId = state.personas[0].id;
         renderPersonas();
+        renderSnapshotInitial(state.personas[0]);
 
         els.personaRow.addEventListener("click", e => {
           const card = e.target.closest(".persona-card");

@@ -68,6 +68,7 @@ Also scan any generated examples or copied snippets when they embed formulas, pr
    - recompute affected examples when formulas change
 7. Re-scan for the stale terms that motivated the pass.
 8. Report changed files, archived/deleted files, current truth sources, remaining uncertainty, and git status.
+9. End with an alignment tail that restates the repository's current shape in plain language so the user and agent leave the pass with the same mental model.
 
 ## Search Checklist
 
@@ -136,5 +137,14 @@ Finish a consistency pass with:
 - validation commands run
 - unresolved uncertainty
 - `git status --short`
+- a short repository-shape recap that repeats the current shared understanding
+
+The repository-shape recap is required. Keep it short, but make it concrete enough to reset shared context after the cleanup. It should usually restate:
+
+- what this repository is for
+- what the current active entry surface is
+- which files are the current truth sources
+- what stage the product/repo is in now
+- what major unfinished threads remain after the pass
 
 If the user asks for a commit, stage only relevant files and commit with a message that explains the consistency change.
